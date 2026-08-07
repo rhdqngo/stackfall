@@ -88,13 +88,13 @@
 
 @media (max-width: 739px) {
   :root {
-    --board-cell: clamp(18px, min(calc((100vw - 148px) / 10), calc((100dvh - 228px) / 20)), 28px);
+    --board-cell: clamp(18px, min(calc((100vw - 148px) / 10), calc((100dvh - 260px) / 20)), 28px);
   }
 
   .app-shell {
     width: auto;
     min-height: 100dvh;
-    padding: max(8px, env(safe-area-inset-top)) max(12px, env(safe-area-inset-right)) max(8px, env(safe-area-inset-bottom)) max(12px, env(safe-area-inset-left));
+    padding: max(8px, env(safe-area-inset-top)) max(12px, env(safe-area-inset-right)) max(4px, env(safe-area-inset-bottom)) max(12px, env(safe-area-inset-left));
   }
 
   .masthead {
@@ -153,6 +153,23 @@
     grid-template-columns: 1fr;
     min-height: 28px;
     margin-top: 6px;
+  }
+}
+
+html[data-touch-controls="on"] {
+  --board-cell: clamp(18px, min(calc((100vw - 440px) / 10), calc((100dvh - 290px) / 20)), 32px);
+}
+
+@media (any-pointer: coarse) {
+  html[data-touch-controls="auto"] {
+    --board-cell: clamp(18px, min(calc((100vw - 440px) / 10), calc((100dvh - 290px) / 20)), 32px);
+  }
+}
+
+@media (max-width: 739px) {
+  html[data-touch-controls="on"],
+  html[data-touch-controls="auto"] {
+    --board-cell: clamp(18px, min(calc((100vw - 148px) / 10), calc((100dvh - 260px) / 20)), 28px);
   }
 }
 

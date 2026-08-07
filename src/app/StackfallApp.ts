@@ -9,6 +9,7 @@ import { getOverlayCopy } from "../ui/copy";
 import { DialogController } from "../ui/dialogs";
 import type { GameShellRefs } from "../ui/gameShell";
 import { GameHud } from "../ui/hud";
+import { TouchControls } from "../ui/touchControls";
 import type { PauseReason, UiPreferences, UiState } from "./uiState";
 
 const FIXED_STEP_MS = 1000 / 60;
@@ -41,6 +42,7 @@ export class StackfallApp {
   private accumulator = 0;
   private toastTimeout: number | null = null;
   private newBest = false;
+  private viewportBlocked = false;
   private readonly resizeObserver: ResizeObserver;
 
   constructor(private readonly refs: GameShellRefs) {
@@ -67,7 +69,11 @@ export class StackfallApp {
       onPreferencesChange: (preferences) => this.updatePreferences(preferences),
       onDialogClose: () => this.finishDialog(),
     });
-    this.resizeObserver = new ResizeObserver(() => this.render(true));
+    new TouchControls(refs.touchControls, this.input);
+    this.resizeObserver = new ResizeObserver(() => {
+      this.checkViewport();
+      this.render(true);
+    });
     canvases.forEach((canvas) => this.resizeObserver.observe(canvas));
   }
 
@@ -84,6 +90,7 @@ export class StackfallApp {
     window.addEventListener("blur", () => this.pauseFromInterruption());
     window.addEventListener("pagehide", () => this.persistProfile());
     this.render(true);
+    this.checkViewport();
     if (this.uiState.storageRecovered) {
       this.showToast("저장된 설정을 읽지 못해 기본값으로 복구했습니다.");
     }
@@ -250,6 +257,30 @@ export class StackfallApp {
     document.documentElement.dataset.contrast = this.uiState.preferences.boardContrast;
     document.documentElement.dataset.motion = this.uiState.preferences.motion;
     document.documentElement.dataset.touchControls = this.uiState.preferences.touchControls;
+    this.input.clear();
+    requestAnimationFrame(() => this.checkViewport());
+  }
+
+  private checkViewport(): void {
+    const mobileLayout = window.innerWidth < 740;
+    const touchVisible = getComputedStyle(this.refs.touchControls).display !== "none";
+    const horizontalReserve = mobileLayout ? 148 : 440;
+    const verticalReserve = touchVisible ? 260 : 180;
+    const rawCell = Math.min(
+      (window.innerWidth - horizontalReserve) / 10,
+      (window.innerHeight - verticalReserve) / 20,
+    );
+    const blocked = rawCell < 18;
+    if (blocked === this.viewportBlocked) return;
+    this.viewportBlocked = blocked;
+    this.refs.viewportNotice.hidden = !blocked;
+    if (blocked) {
+      this.pauseFromInterruption();
+      this.input.setContext("modal");
+    } else if (this.uiState.modal === "none") {
+      this.input.setContext("gameplay");
+      if (this.state.status !== "running") this.refs.primaryButton.focus();
+    }
   }
 
   private persistProfile(): void {

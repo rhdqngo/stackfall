@@ -486,6 +486,90 @@
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
 }
 
+.touch-controls {
+  display: none;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-3);
+  width: min(100%, 520px);
+  margin: 8px auto 0;
+  touch-action: none;
+  user-select: none;
+}
+
+.touch-cluster {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(48px, 1fr));
+  gap: 6px;
+}
+
+.touch-controls button {
+  min-width: 48px;
+  min-height: 48px;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-control);
+  background: var(--surface-raised);
+  color: var(--text-primary);
+  font-size: 0.72rem;
+  font-weight: 700;
+  touch-action: none;
+}
+
+.touch-controls button span {
+  font-size: 1.2rem;
+}
+
+.touch-controls button.is-pressed {
+  border-color: var(--accent);
+  background: rgba(255, 200, 87, 0.18);
+  color: var(--accent);
+  transform: translateY(1px);
+}
+
+.touch-hard-drop {
+  grid-column: span 2;
+  border-color: var(--accent) !important;
+}
+
+html[data-touch-controls="on"] .touch-controls {
+  display: grid;
+}
+
+html[data-touch-controls="on"] .controls-panel {
+  display: none;
+}
+
+.viewport-notice {
+  position: fixed;
+  z-index: 110;
+  inset: 0;
+  display: grid;
+  align-content: center;
+  justify-items: center;
+  padding: var(--space-5);
+  background: rgba(3, 8, 12, 0.94);
+  text-align: center;
+}
+
+.viewport-notice strong {
+  margin-top: var(--space-2);
+  font-size: 1.6rem;
+}
+
+.viewport-notice p {
+  max-width: 360px;
+  color: var(--text-secondary);
+}
+
+@media (any-pointer: coarse) {
+  html[data-touch-controls="auto"] .touch-controls {
+    display: grid;
+  }
+
+  html[data-touch-controls="auto"] .controls-panel {
+    display: none;
+  }
+}
+
 @media (max-width: 739px) {
   .brand-block h1 {
     font-size: 2rem;
@@ -597,6 +681,15 @@
   .status-rail {
     min-height: 26px;
     margin-top: 6px;
+  }
+
+  .hold-panel .empty-preview {
+    font-size: 0;
+  }
+
+  .hold-panel .empty-preview::after {
+    content: "—";
+    font-size: 0.72rem;
   }
 
   .modal-dialog {

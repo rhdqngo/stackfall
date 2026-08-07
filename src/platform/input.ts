@@ -1,18 +1,18 @@
 import type { InputCommand } from "../game/types";
+import { RepeatController, type RepeatProfile } from "./repeatController";
 
-const DAS_MS = 150;
-const ARR_MS = 50;
+export const DAS_MS = 150;
+export const ARR_MS = 50;
 
 export type InputContext = "gameplay" | "modal";
 
-interface HeldInput {
+interface CommandBinding {
   command: InputCommand;
-  nextAt: number;
-  interval: number;
+  repeat?: RepeatProfile;
 }
 
 export class InputController {
-  private readonly held = new Map<string, HeldInput>();
+  private readonly repeats = new RepeatController<InputCommand>();
   private context: InputContext = "gameplay";
 
   constructor(private readonly dispatch: (command: InputCommand) => void) {}
@@ -25,19 +25,24 @@ export class InputController {
 
   update(timestamp: number): void {
     if (this.context !== "gameplay") return;
-    for (const input of this.held.values()) {
-      let repeats = 0;
-      while (timestamp >= input.nextAt && repeats < 4) {
-        this.dispatch(input.command);
-        input.nextAt += input.interval;
-        repeats += 1;
-      }
-      if (repeats === 4 && timestamp >= input.nextAt) input.nextAt = timestamp + input.interval;
-    }
+    this.repeats.update(timestamp, this.dispatch);
+  }
+
+  trigger(command: InputCommand): void {
+    if (this.context === "gameplay") this.dispatch(command);
+  }
+
+  press(id: string, command: InputCommand, profile: RepeatProfile): void {
+    if (this.context !== "gameplay") return;
+    if (this.repeats.press(id, command, performance.now(), profile)) this.dispatch(command);
+  }
+
+  release(id: string): void {
+    this.repeats.release(id);
   }
 
   clear = (): void => {
-    this.held.clear();
+    this.repeats.clear();
   };
 
   setContext(context: InputContext): void {
@@ -50,57 +55,51 @@ export class InputController {
     const target = event.target instanceof Element ? event.target : null;
     if (target?.closest("button, input, select, textarea, dialog, [contenteditable='true']")) return;
 
-    const heldCommand = this.getHeldCommand(event.code);
-    if (heldCommand) {
-      event.preventDefault();
-      if (!this.held.has(event.code)) {
-        this.dispatch(heldCommand.command);
-        this.held.set(event.code, {
-          command: heldCommand.command,
-          nextAt: performance.now() + heldCommand.delay,
-          interval: heldCommand.interval,
-        });
-      }
+    const binding = this.getCommandBinding(event.code);
+    if (!binding) return;
+    event.preventDefault();
+
+    if (binding.repeat) {
+      this.press(`keyboard:${event.code}`, binding.command, binding.repeat);
       return;
     }
-
-    const command = this.getDiscreteCommand(event.code);
-    if (!command) return;
-    event.preventDefault();
-    if (!event.repeat) this.dispatch(command);
+    if (!event.repeat) this.trigger(binding.command);
   };
 
   private onKeyUp = (event: KeyboardEvent): void => {
-    this.held.delete(event.code);
+    this.release(`keyboard:${event.code}`);
   };
 
-  private getHeldCommand(code: string): { command: InputCommand; delay: number; interval: number } | null {
-    if (code === "ArrowLeft") return { command: { type: "move", dx: -1 }, delay: DAS_MS, interval: ARR_MS };
-    if (code === "ArrowRight") return { command: { type: "move", dx: 1 }, delay: DAS_MS, interval: ARR_MS };
-    if (code === "ArrowDown") return { command: { type: "softDrop" }, delay: ARR_MS, interval: ARR_MS };
-    return null;
-  }
+  private getCommandBinding(code: string): CommandBinding | null {
+    if (code === "ArrowLeft") {
+      return { command: { type: "move", dx: -1 }, repeat: { delay: DAS_MS, interval: ARR_MS } };
+    }
+    if (code === "ArrowRight") {
+      return { command: { type: "move", dx: 1 }, repeat: { delay: DAS_MS, interval: ARR_MS } };
+    }
+    if (code === "ArrowDown") {
+      return { command: { type: "softDrop" }, repeat: { delay: ARR_MS, interval: ARR_MS } };
+    }
 
-  private getDiscreteCommand(code: string): InputCommand | null {
     switch (code) {
       case "ArrowUp":
       case "KeyX":
-        return { type: "rotate", direction: 1 };
+        return { command: { type: "rotate", direction: 1 } };
       case "KeyZ":
-        return { type: "rotate", direction: -1 };
+        return { command: { type: "rotate", direction: -1 } };
       case "Space":
-        return { type: "hardDrop" };
+        return { command: { type: "hardDrop" } };
       case "KeyC":
       case "ShiftLeft":
       case "ShiftRight":
-        return { type: "hold" };
+        return { command: { type: "hold" } };
       case "KeyP":
       case "Escape":
-        return { type: "pause" };
+        return { command: { type: "pause" } };
       case "KeyR":
-        return { type: "restart", seed: 0 };
+        return { command: { type: "restart", seed: 0 } };
       case "Enter":
-        return { type: "start" };
+        return { command: { type: "start" } };
       default:
         return null;
     }

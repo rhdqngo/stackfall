@@ -47,6 +47,8 @@ export interface GameShellRefs {
   restartCancel: HTMLButtonElement;
   restartConfirm: HTMLButtonElement;
   toast: HTMLElement;
+  touchControls: HTMLElement;
+  viewportNotice: HTMLElement;
   announcer: HTMLElement;
 }
 
@@ -133,6 +135,20 @@ export function createGameShell(root: HTMLElement): GameShellRefs {
         </section>
       </main>
 
+      <section id="touch-controls" class="touch-controls" aria-label="터치 게임 조작">
+        <div class="touch-cluster" aria-label="이동과 홀드">
+          <button type="button" data-touch-action="left" aria-label="왼쪽으로 이동"><span aria-hidden="true">←</span></button>
+          <button type="button" data-touch-action="right" aria-label="오른쪽으로 이동"><span aria-hidden="true">→</span></button>
+          <button type="button" data-touch-action="down" aria-label="소프트 드롭"><span aria-hidden="true">↓</span></button>
+          <button type="button" data-touch-action="hold">홀드</button>
+        </div>
+        <div class="touch-cluster touch-cluster--actions" aria-label="회전과 하드 드롭">
+          <button type="button" data-touch-action="rotateLeft" aria-label="왼쪽으로 회전"><span aria-hidden="true">↺</span></button>
+          <button type="button" data-touch-action="rotateRight" aria-label="오른쪽으로 회전"><span aria-hidden="true">↻</span></button>
+          <button class="touch-hard-drop" type="button" data-touch-action="hardDrop">하드 드롭</button>
+        </div>
+      </section>
+
       <footer id="controls-help" class="controls-panel">
         <h2>조작</h2>
         <ul>
@@ -193,6 +209,11 @@ export function createGameShell(root: HTMLElement): GameShellRefs {
           <button id="restart-confirm" class="button button--danger" type="button">다시 시작</button>
         </div>
       </dialog>
+      <div id="viewport-notice" class="viewport-notice" role="alertdialog" aria-modal="true" aria-labelledby="viewport-notice-title" hidden>
+        <span class="dialog-kicker">VIEWPORT LIMITED</span>
+        <strong id="viewport-notice-title">화면 공간이 부족합니다</strong>
+        <p>기기를 세로로 돌리거나 브라우저 높이를 늘린 뒤 계속하세요.</p>
+      </div>
       <div id="status-toast" class="status-toast" role="status" aria-live="polite" hidden></div>
       <div id="status-announcer" class="sr-only" role="status" aria-live="polite" aria-atomic="true"></div>
     </div>
@@ -228,6 +249,8 @@ export function createGameShell(root: HTMLElement): GameShellRefs {
     restartCancel: requireElement(root, "#restart-cancel"),
     restartConfirm: requireElement(root, "#restart-confirm"),
     toast: requireElement(root, "#status-toast"),
+    touchControls: requireElement(root, "#touch-controls"),
+    viewportNotice: requireElement(root, "#viewport-notice"),
     announcer: requireElement(root, "#status-announcer"),
   };
 }

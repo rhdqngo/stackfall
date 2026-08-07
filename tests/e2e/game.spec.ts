@@ -51,9 +51,34 @@ test("supports keyboard play, pause, resume, and restart", async ({ page }) => {
   expect(errors).toEqual([]);
 });
 
+test("supports touch play through the shared input path", async ({ page }) => {
+  const errors = collectConsoleErrors(page);
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("/");
+
+  await page.getByRole("button", { name: "설정" }).click();
+  await page.getByRole("radio", { name: "항상 표시" }).click();
+  await page.getByRole("button", { name: "설정 닫기" }).click();
+  await expect(page.locator("#touch-controls")).toBeVisible();
+
+  await page.getByRole("button", { name: "게임 시작" }).click();
+  await page.getByRole("button", { name: "오른쪽으로 이동" }).click();
+  await page.getByRole("button", { name: "오른쪽으로 회전" }).click();
+  await page.getByRole("button", { name: "하드 드롭" }).click();
+  await expect.poll(async () => Number(await page.locator("#score-value").textContent())).toBeGreaterThan(0);
+
+  await page.getByRole("button", { name: "홀드" }).click();
+  await expect(page.locator(".hold-panel")).toHaveAttribute("data-available", "false");
+  await expect(page.locator("#hold-state")).toHaveText("잠김");
+  expect(errors).toEqual([]);
+});
+
 for (const viewport of [
-  { name: "desktop", width: 1280, height: 720 },
-  { name: "narrow", width: 390, height: 844 },
+  { name: "desktop", width: 1440, height: 900 },
+  { name: "small desktop", width: 1024, height: 768 },
+  { name: "portrait tablet", width: 768, height: 1024 },
+  { name: "mobile", width: 390, height: 844 },
+  { name: "small mobile", width: 360, height: 640 },
 ]) {
   test(`keeps primary UI inside the ${viewport.name} viewport width`, async ({ page }) => {
     const errors = collectConsoleErrors(page);
@@ -63,12 +88,14 @@ for (const viewport of [
     const overflow = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
     expect(overflow).toBeLessThanOrEqual(0);
 
-    for (const selector of [".masthead", ".board-frame", ".stats-panel", ".preview-panel", ".controls-panel"]) {
+    for (const selector of [".masthead", ".board-frame", ".stats-panel", ".preview-panel"]) {
       const box = await page.locator(selector).boundingBox();
       expect(box, `${selector} should be rendered`).not.toBeNull();
       expect(box!.x).toBeGreaterThanOrEqual(0);
       expect(box!.x + box!.width).toBeLessThanOrEqual(viewport.width + 1);
     }
+    const boardBox = await page.locator(".board-frame").boundingBox();
+    expect(boardBox!.y + boardBox!.height).toBeLessThanOrEqual(viewport.height + 1);
     expect(errors).toEqual([]);
   });
 }
