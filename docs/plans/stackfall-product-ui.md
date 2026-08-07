@@ -48,3 +48,5 @@
 ## 구현 상태 (2026-08-07)
 
 7개 구현 단계를 모두 완료했다. 실제 변경은 기준선 이후 UI 구조·상태/설정·터치·피드백/접근성·시각/성능 검증·문서 커밋으로 분리했다. 자동 검증 결과와 아직 수동 확인이 필요한 항목은 `docs/notes/handoff.md`에 기록한다.
+
+후속 작업에서 단일 GameShell을 `Home`, `Game`, `Result` Screen으로 재구성했다. 상태 소유권, History API, overlay/dialog 분류, run 보존 정책의 최종 계약은 `docs/plans/stackfall-screen-architecture.md`를 참조한다.

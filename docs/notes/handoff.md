@@ -1,64 +1,72 @@
 # 인수인계
 
 **마지막 갱신**: 2026-08-07
+
 **브랜치**: master
-**상태**: Stackfall 제품 UI 구현 완료, push·배포 안 함
+
+**상태**: Stackfall Home/Game/Result Screen 개편 완료, push·배포 안 함
 
 ## 완료한 목표
 
-기존 게임 규칙과 키보드 입력 감각을 유지하면서 임시 UI를 데스크톱·태블릿·모바일에서 플레이 가능한 제품 UI로 교체했다. 승인 계획은 `docs/plans/stackfall-product-ui.md`에 있다.
+기존 단일 `GameShell`에 섞여 있던 시작, 플레이, 완료 역할을 `Home`, `Game`, `Result`의 세 최상위 Screen으로 분리했다. 게임 규칙과 입력 타이밍은 유지하고, 설정·조작 도움말·재시작·run 종료 확인은 현재 맥락으로 돌아오는 dialog, pause는 게임 위 overlay, 저장 복구는 toast, 작은 viewport는 blocking notice로 유지했다.
+
+상태와 내비게이션 결정은 `docs/plans/stackfall-screen-architecture.md`, 제품 UI의 원래 범위는 `docs/plans/stackfall-product-ui.md`에 있다.
 
 ## 주요 구현
 
-- `src/app/StackfallApp.ts`가 단일 `GameState`와 UI 상태를 소유하고 `src/main.ts`는 boot만 담당한다.
-- `src/ui/`에 GameShell, HUD, dialog, announcer, touch controls, feedback을 분리했다.
-- `src/ui/styles/`에 토큰·기본·레이아웃·컴포넌트·모션 스타일을 분리하고 Canvas도 같은 CSS 토큰을 캐시해 사용한다.
-- ready, running, paused, focus-loss paused, game-over, restart confirm, settings, controls, storage recovery, viewport notice, initialization error 상태를 구현했다.
-- 최고 점수와 설정을 `stackfall:profile:v1`로 저장하며 손상·접근 실패 시 기본값으로 복구한다.
-- 키보드와 터치가 같은 `InputController`/`RepeatController` 명령 계층을 사용한다. DAS 150ms와 ARR 50ms는 유지했다.
-- 모바일 터치 대상은 48px 이상이며 hard drop은 버튼 내부 pointerup에서만 실행한다. pointer cancel/leave 시 반복 입력을 해제한다.
-- 상태 차이에서 비차단 피드백을 파생하고 모든 모션을 220ms 이하로 제한했다. reduced motion에서는 0.01ms로 축소한다.
-- Canvas와 HUD는 dirty 상태만 다시 그리고 오버레이 DOM은 상태 key가 바뀔 때만 갱신한다.
-- 개발 전용 고정 fixture와 9개 시각 기준선을 추가했다. fixture/freeze 표식은 production bundle에 남지 않는다.
+- `src/ui/appShell.ts`가 수명이 안정적인 Screen host, 세 Screen root, 전역 dialog/notice/toast 계층을 한 번 생성한다.
+- `src/ui/screens/homeScreen.ts`, `gameScreen.ts`, `resultScreen.ts`가 Screen별 semantic DOM과 Primary action을 소유한다.
+- `src/app/StackfallApp.ts`가 단일 `GameState`, `UiState`, `RunPresentationState`를 조정한다. UI가 게임 상태를 중복 소유하지 않는다.
+- `src/app/navigation.ts`가 History API와 `#/`, `#/game`, `#/result`를 연결하고 run token으로 메모리 세션을 검증한다.
+- direct Game/Result URL과 새로고침은 저장되지 않은 run을 복원하지 않고 Home으로 정규화한다.
+- 실행 중 Back/Home은 게임을 pause한 뒤 run 종료 확인을 거친다. 취소하면 paused run과 Game history 위치를 보존한다.
+- 설정·도움말·재시작 dialog는 modal history entry를 사용한다. Escape/Back으로 닫고 정확한 opener로 포커스를 복원한다.
+- Game 밖에서는 입력 context를 `inactive`로 전환하고 touch repeat를 reset한다. Game 진입 시에만 Canvas `ResizeObserver`를 연결한다.
+- Result 진입 전에 최종 점수와 최고 점수를 확정·저장한다. 재도전은 새 Game으로 교체하고 Home 이동은 완료 run을 폐기한다.
+- Home은 작은 viewport에서도 접근 가능하며 게임 시작 시에만 공간을 검사한다. 실행 중 화면 축소는 run을 자동 pause하고 크기 복구 뒤 명시적인 계속하기를 요구한다.
+- 기존 amber 낙하 축과 계기판 스타일을 유지하되 Home은 진입 행동, Game은 board, Result는 최종 점수에 가장 강한 시각적 무게를 둔다.
 
-## 단계별 커밋
+## 이번 작업의 단계별 커밋
 
-- `5ea7f68` Establish playable Stackfall MVP baseline
-- `5cfbe9e` Restructure Stackfall UI around the game board
-- `ea90b5d` Add resilient game state dialogs and player settings
-- `fd1080e` Add responsive touch controls and stable E2E runner
-- `1038296` Add non-blocking feedback and modal accessibility
-- `a76c3d8` Add deterministic visual and performance validation
-- 최종 문서·회귀 커밋은 이 파일을 포함한 다음 커밋이다.
+- `50eaf6f` Split Stackfall into focused Home, Game, and Result screens
+- `8447a5d` Harden Screen navigation and lifecycle edge cases
+- README, Screen 아키텍처, 이 인수인계는 마지막 문서 커밋에 포함한다.
 
 ## 검증됨
 
-- `npm run lint`: 경고 0
-- `npm run typecheck`: 통과
-- `npm run test`: 8개 파일, 43개 테스트 통과
-- `npm run build`: TypeScript와 Vite production build 통과
-- `npm run test:e2e`: Chromium 통합·접근성·시각 회귀 테스트 통과
-- 목표 뷰포트 1440×900, 1024×768, 768×1024, 390×844, 360×640의 가로 overflow와 보드 잘림 자동 검증
-- focus-loss, restart confirm, modal focus trap, corrupted storage, minimum viewport block, reduced motion, forced colors, touch cancel 자동 검증
-- production `dist`에서 `fixture`, `freeze`, `high-stack`, `hold-used` 문자열 0건 확인
-- 성능 측정 각 30초: 데스크톱과 모바일 모두 평균 16.66ms, p95 16.7ms, 최대 16.8ms, 50ms 이상 long task 1건, DOM 202개
-- 인앱 브라우저 360×640에서 터치 이동·회전·hard drop·hold와 scrollWidth/scrollHeight=viewport 확인
+- `npm run check`: 통과
+  - ESLint 경고 0
+  - Vitest 9개 파일, 51개 테스트 통과
+  - TypeScript typecheck 통과
+  - Vite production build 통과, 30 modules transformed
+  - Chromium E2E 32개 통과
+- Screen E2E: Home 초기 포커스, keyboard 시작/플레이/pause/resume/restart, focus-loss pause, Result 재도전/Home, active-run Back 취소·확인, direct Game/Result URL 정규화
+- viewport E2E: 1440×900, 1024×768, 768×1024, 390×844, 360×640의 Game UI 경계와 가로 overflow 검증
+- 모바일 E2E: touch controls는 Game에서만 표시, 이동·회전·hard drop·hold, 취소된 hard drop, 작은 viewport pause/복구 검증
+- 접근성 E2E: 활성 Screen만 `inert` 해제, accessible name, dialog focus 순환·복원, reduced motion, forced colors, browser Back dialog close
+- visual E2E 10개: Home desktop/mobile, running desktop/mobile, high-stack desktop/tablet, hold-used, paused, Result desktop/mobile
+- visual 수동 검토: Home은 board/HUD 없이 시작 행동 중심, Game 모바일은 board와 48px touch dock 중심, Result는 board 없이 최종 점수 중심으로 구분됨
+- 성능 각 30초:
+  - desktop 1440×900: 평균 16.66ms, p95 16.7ms, 최대 16.8ms, long task 1, heap delta 0
+  - mobile 390×844: 평균 16.66ms, p95 16.7ms, 최대 16.8ms, long task 1, heap delta 0
+  - 이전 측정과 frame/long task/heap 수치는 동일하고, persistent Screen DOM 도입으로 DOM node는 202→263 증가
 
 ## 미검증 / 출시 전 수동 확인
 
-- 저장된 구현 전 Performance trace가 없어 “기준선 대비 10% 이내” 상대 기준은 판정하지 않았다. `npm run measure:performance`로 이후 동일 조건 비교가 가능하다.
 - iPhone Safari와 Android Chrome 실제 기기에서 safe area, 주소창 `dvh` 전환, 두 엄지 멀티터치, pointer cancel을 확인해야 한다.
 - Firefox/WebKit Playwright 바이너리는 설치하지 않았고 자동 실행하지 않았다.
-- 200% 브라우저 확대와 OS 고대비는 실제 데스크톱 환경에서 최종 디자인 검토가 필요하다.
-- 장시간 고레벨 플레이의 DAS/ARR 체감은 규칙 회귀와 별도로 플레이테스트가 필요하다.
+- 200% 브라우저 확대와 실제 OS 고대비는 데스크톱 환경에서 최종 디자인 검토가 필요하다.
+- 브라우저 고유의 `beforeunload` 확인 문구와 모바일 Back gesture는 실제 브라우저에서 확인해야 한다.
+- 장시간 고레벨 플레이의 DAS 150ms/ARR 50ms 체감은 별도 플레이테스트가 필요하다.
 
 ## 범위 준수
 
-- `src/game/` 규칙, 점수, 7-bag, SRS, 낙하 속도, lock delay를 변경하지 않았다.
-- 프레임워크, 상태 관리, 아이콘, 폰트, 이미지, 사운드 패키지를 추가하지 않았다.
+- `src/game/**` 규칙, 점수, 7-bag, SRS, 낙하 속도, lock delay를 변경하지 않았다.
+- 프레임워크, 라우터, 상태 관리, 아이콘, 폰트, 이미지, 사운드 패키지를 추가하지 않았다.
+- 최고 점수와 환경 설정 외의 run 상태를 저장하지 않았다.
 - 계정, 서버, 순위표, 멀티플레이, 결제, 광고를 추가하지 않았다.
 - 외부 저작권 자산을 사용하지 않았다.
 
 ## 막힌 것
 
-- 자동 구현과 Chromium 검증은 막힌 항목이 없다. 실제 기기와 타 브라우저 수동 검증은 별도 환경이 필요하다.
+자동 구현과 Chromium 검증에는 막힌 항목이 없다. 실제 기기·Firefox·WebKit 검증은 별도 실행 환경이 필요하다.
