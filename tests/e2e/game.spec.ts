@@ -42,6 +42,9 @@ test("supports keyboard play, pause, resume, and restart", async ({ page }) => {
   await page.keyboard.press("Enter");
   await expect(page.locator("#game-status")).toHaveText("진행 중");
   await page.keyboard.press("r");
+  await expect(page.getByRole("dialog", { name: "현재 게임을 다시 시작할까요?" })).toBeVisible();
+  await expect(page.locator("#game-status")).toHaveText("일시정지");
+  await page.locator("#restart-confirm").click();
   await expect(page.locator("#game-status")).toHaveText("진행 중");
   await expect(page.locator("#score-value")).toHaveText("0");
   await expect(page.locator("#lines-value")).toHaveText("0");

@@ -1,3 +1,4 @@
+import type { PauseReason } from "../app/uiState";
 import type { GameStatus } from "../game/types";
 
 export const STATUS_LABELS: Record<GameStatus, string> = {
@@ -14,7 +15,7 @@ export interface OverlayCopy {
   action: string;
 }
 
-export function getOverlayCopy(status: GameStatus, score: number): OverlayCopy | null {
+export function getOverlayCopy(status: GameStatus, score: number, pauseReason: PauseReason = null): OverlayCopy | null {
   if (status === "running") return null;
   if (status === "ready") {
     return {
@@ -25,10 +26,17 @@ export function getOverlayCopy(status: GameStatus, score: number): OverlayCopy |
     };
   }
   if (status === "paused") {
+    const description = pauseReason === "interruption"
+      ? "창을 벗어나 자동으로 멈췄습니다."
+      : pauseReason === "settings"
+        ? "메뉴를 닫았습니다. 준비되면 계속하세요."
+        : pauseReason === "restart"
+          ? "현재 게임은 안전하게 멈춰 있습니다."
+          : "준비되면 같은 흐름으로 돌아갑니다.";
     return {
       eyebrow: "FLOW HELD",
       title: "일시정지",
-      description: "준비되면 같은 흐름으로 돌아갑니다.",
+      description,
       action: "계속하기",
     };
   }

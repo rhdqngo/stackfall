@@ -102,3 +102,11 @@ kbd {
   color: var(--text-secondary);
   overflow-wrap: anywhere;
 }
+
+[data-motion="reduced"] *,
+[data-motion="reduced"] *::before,
+[data-motion="reduced"] *::after {
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.01ms !important;
+}

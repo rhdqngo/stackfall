@@ -3,6 +3,8 @@ import type { InputCommand } from "../game/types";
 const DAS_MS = 150;
 const ARR_MS = 50;
 
+export type InputContext = "gameplay" | "modal";
+
 interface HeldInput {
   command: InputCommand;
   nextAt: number;
@@ -11,6 +13,7 @@ interface HeldInput {
 
 export class InputController {
   private readonly held = new Map<string, HeldInput>();
+  private context: InputContext = "gameplay";
 
   constructor(private readonly dispatch: (command: InputCommand) => void) {}
 
@@ -21,6 +24,7 @@ export class InputController {
   }
 
   update(timestamp: number): void {
+    if (this.context !== "gameplay") return;
     for (const input of this.held.values()) {
       let repeats = 0;
       while (timestamp >= input.nextAt && repeats < 4) {
@@ -36,13 +40,15 @@ export class InputController {
     this.held.clear();
   };
 
+  setContext(context: InputContext): void {
+    this.context = context;
+    this.clear();
+  }
+
   private onKeyDown = (event: KeyboardEvent): void => {
-    if (
-      event.target instanceof HTMLButtonElement &&
-      (event.code === "Enter" || event.code === "Space")
-    ) {
-      return;
-    }
+    if (this.context !== "gameplay") return;
+    const target = event.target instanceof Element ? event.target : null;
+    if (target?.closest("button, input, select, textarea, dialog, [contenteditable='true']")) return;
 
     const heldCommand = this.getHeldCommand(event.code);
     if (heldCommand) {

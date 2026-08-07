@@ -92,6 +92,11 @@
   background: var(--accent-hover);
 }
 
+.button--danger {
+  border-color: var(--danger);
+  color: var(--danger);
+}
+
 .hud-card {
   border-top: 3px solid var(--border-subtle);
   border-radius: var(--radius-surface);
@@ -336,6 +341,151 @@
   font-size: 0.64rem;
 }
 
+.modal-dialog {
+  width: min(calc(100% - 32px), 520px);
+  max-height: min(82dvh, 680px);
+  padding: var(--space-5);
+  overflow: auto;
+  border: 1px solid var(--border-strong);
+  border-left: 3px solid var(--accent);
+  border-radius: var(--radius-dialog);
+  background: var(--surface-2);
+  color: var(--text-primary);
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.5);
+  user-select: text;
+}
+
+.modal-dialog::backdrop {
+  background: rgba(3, 8, 12, 0.78);
+}
+
+.modal-dialog--compact {
+  width: min(calc(100% - 32px), 420px);
+}
+
+.dialog-heading {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  gap: var(--space-4);
+  padding-bottom: var(--space-4);
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.dialog-heading h2,
+.modal-dialog--compact h2 {
+  margin: 4px 0 0;
+  font-size: 1.35rem;
+}
+
+.dialog-kicker {
+  color: var(--accent);
+  font-family: ui-monospace, monospace;
+  font-size: 0.58rem;
+  letter-spacing: 0.15em;
+}
+
+.dialog-close {
+  width: 40px;
+  height: 40px;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-control);
+  background: transparent;
+  color: var(--text-primary);
+  cursor: pointer;
+  font-size: 1.45rem;
+}
+
+.control-guide-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-2);
+  padding-top: var(--space-4);
+}
+
+.control-guide-grid > div {
+  display: flex;
+  min-height: 52px;
+  align-items: center;
+  gap: 6px;
+  padding: var(--space-2);
+  border: 1px solid var(--border-subtle);
+}
+
+.control-guide-grid span {
+  margin-left: auto;
+  color: var(--text-secondary);
+  font-size: 0.74rem;
+}
+
+.settings-form {
+  display: grid;
+  gap: var(--space-3);
+  padding-top: var(--space-4);
+}
+
+.settings-form fieldset {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+  margin: 0;
+  padding: var(--space-3);
+  border: 1px solid var(--border-subtle);
+}
+
+.settings-form legend {
+  padding: 0 5px;
+  color: var(--text-secondary);
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+
+.settings-form label {
+  display: flex;
+  min-height: 44px;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 6px;
+  border: 1px solid transparent;
+  border-radius: var(--radius-control);
+  background: var(--surface-1);
+  color: var(--text-secondary);
+  cursor: pointer;
+  font-size: 0.72rem;
+  text-align: center;
+}
+
+.settings-form label:has(input:checked) {
+  border-color: var(--accent);
+  color: var(--text-primary);
+}
+
+.settings-form input {
+  accent-color: var(--accent);
+}
+
+.dialog-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-2);
+  margin-top: var(--space-5);
+}
+
+.status-toast {
+  position: fixed;
+  z-index: 120;
+  right: max(16px, env(safe-area-inset-right));
+  bottom: max(16px, env(safe-area-inset-bottom));
+  max-width: min(calc(100% - 32px), 420px);
+  padding: 12px 16px;
+  border-left: 3px solid var(--warning);
+  background: var(--surface-raised);
+  color: var(--text-primary);
+  font-size: 0.76rem;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+}
+
 @media (max-width: 739px) {
   .brand-block h1 {
     font-size: 2rem;
@@ -447,5 +597,14 @@
   .status-rail {
     min-height: 26px;
     margin-top: 6px;
+  }
+
+  .modal-dialog {
+    padding: var(--space-4);
+  }
+
+  .control-guide-grid,
+  .settings-form fieldset {
+    grid-template-columns: 1fr;
   }
 }
