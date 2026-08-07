@@ -1,21 +1,21 @@
 :root {
   color-scheme: dark;
-  --color-bg: #0b1118;
-  --color-well: #050d14;
-  --surface-1: #111c26;
-  --surface-2: #172632;
-  --surface-raised: #1d2f3c;
-  --text-primary: #f3f5f1;
-  --text-secondary: #a8b5be;
-  --text-subtle: #7d8e9a;
-  --border-subtle: #2b3b48;
-  --border-strong: #526878;
-  --accent: #ffc857;
-  --accent-hover: #ffd778;
-  --accent-on: #211a0a;
-  --success: #64c88a;
-  --warning: #ffc857;
-  --danger: #ed6a70;
+  --color-bg: #0a1116;
+  --color-well: #03090e;
+  --surface-1: #14222b;
+  --surface-2: color-mix(in srgb, var(--surface-1) 92%, var(--text-primary));
+  --surface-raised: color-mix(in srgb, var(--surface-1) 86%, var(--text-primary));
+  --text-primary: #eff1ea;
+  --text-secondary: #9ba8ad;
+  --text-subtle: color-mix(in srgb, var(--text-secondary) 74%, var(--color-bg));
+  --border-subtle: color-mix(in srgb, var(--text-secondary) 28%, transparent);
+  --border-strong: color-mix(in srgb, var(--text-secondary) 58%, transparent);
+  --accent: #e6aa3f;
+  --accent-hover: color-mix(in srgb, var(--accent) 88%, var(--text-primary));
+  --accent-on: #171005;
+  --success: #68c48b;
+  --warning: var(--accent);
+  --danger: #e56b6f;
   --piece-i: #4cc9e8;
   --piece-j: #5b7cde;
   --piece-l: #f09245;
@@ -23,9 +23,9 @@
   --piece-s: #61c985;
   --piece-t: #b57ade;
   --piece-z: #e6686e;
-  --board-grid: rgba(168, 181, 190, 0.1);
-  --danger-wash: rgba(237, 106, 112, 0.035);
-  --danger-line: rgba(237, 106, 112, 0.2);
+  --board-grid: rgba(155, 168, 173, 0.09);
+  --danger-wash: rgba(229, 107, 111, 0.045);
+  --danger-line: rgba(229, 107, 111, 0.34);
   --block-edge: rgba(255, 255, 255, 0.22);
   --block-shade: rgba(0, 0, 0, 0.22);
   --active-stroke: rgba(255, 255, 255, 0.78);
@@ -37,10 +37,10 @@
   --space-4: 16px;
   --space-5: 24px;
   --space-6: 32px;
-  --radius-surface: 2px;
-  --radius-control: 4px;
-  --radius-dialog: 8px;
-  --focus-ring: #ffe08a;
+  --radius-surface: 0;
+  --radius-control: 3px;
+  --radius-dialog: 4px;
+  --focus-ring: #f5d27a;
   --motion-press: 70ms;
   --motion-interaction: 120ms;
   --motion-overlay: 160ms;
@@ -51,10 +51,10 @@
 }
 
 [data-contrast="high"] {
-  --color-well: #00070c;
-  --border-subtle: #607482;
-  --border-strong: #91a4b0;
-  --board-grid: rgba(243, 245, 241, 0.2);
+  --color-well: #000508;
+  --border-subtle: rgba(239, 241, 234, 0.48);
+  --border-strong: rgba(239, 241, 234, 0.72);
+  --board-grid: rgba(239, 241, 234, 0.2);
   --ghost-stroke: rgba(255, 255, 255, 0.86);
   --ghost-fill-alpha: 0.12;
 }

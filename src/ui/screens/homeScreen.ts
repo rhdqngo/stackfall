@@ -24,7 +24,7 @@ export function createHomeScreen(): HomeScreenRefs {
   root.innerHTML = `
     <header class="home-header">
       <div class="brand-block brand-block--hero">
-        <p class="eyebrow">FALLING BLOCK / SOLO</p>
+        <p class="eyebrow">1인 낙하 블록</p>
         <h1 id="home-title">STACKFALL</h1>
       </div>
       <nav class="screen-utilities" aria-label="홈 메뉴">
@@ -33,9 +33,8 @@ export function createHomeScreen(): HomeScreenRefs {
       </nav>
     </header>
     <main class="home-stage">
-      <div class="home-fallline" aria-hidden="true"><span>DROP AXIS / READY</span></div>
+      <div class="home-fallline" aria-hidden="true"></div>
       <div class="home-intro">
-        <span class="screen-kicker">PRECISION DROP SYSTEM</span>
         <h2><span>빈틈을 읽고</span><span>흐름을 지키세요.</span></h2>
         <p>조각을 정렬하고, 다음 수를 준비하고, 쌓인 흐름을 끝까지 관리하세요.</p>
         <button id="home-start-action" class="button button--primary home-start" type="button">게임 시작</button>
@@ -43,7 +42,7 @@ export function createHomeScreen(): HomeScreenRefs {
       </div>
       <aside class="home-brief" aria-label="게임 시작 정보">
         <div class="home-best">
-          <span>BEST SCORE</span>
+          <span>최고 점수</span>
           <strong id="home-best-value">0</strong>
         </div>
         <div class="home-control-primer">

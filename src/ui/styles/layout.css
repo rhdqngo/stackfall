@@ -18,57 +18,77 @@
 .game-header,
 .result-header {
   display: grid;
-  min-height: 68px;
+  min-height: 64px;
   align-items: end;
   gap: var(--space-5);
   padding-bottom: 12px;
   border-bottom: 1px solid var(--border-subtle);
 }
 
-.home-header {
+.home-header,
+.game-header {
   grid-template-columns: 1fr auto;
 }
 
 .game-header {
-  grid-template-columns: auto 1fr auto;
-  min-height: 54px;
+  min-height: 50px;
   margin-bottom: var(--space-3);
-  padding-bottom: 9px;
+  padding-bottom: 8px;
 }
 
 .result-header {
-  grid-template-columns: 1fr auto;
+  min-height: 58px;
+  grid-template-columns: 1fr;
   align-items: center;
+  border-bottom: 0;
 }
 
 .home-stage {
   display: grid;
-  grid-template-columns: 28px minmax(0, 1.35fr) minmax(260px, 0.75fr);
-  gap: clamp(24px, 5vw, 64px);
-  min-height: calc(100dvh - 132px);
-  align-items: center;
-  padding: clamp(32px, 8vh, 82px) clamp(8px, 3vw, 32px);
+  width: min(100%, 880px);
+  min-height: calc(100dvh - 128px);
+  grid-template-columns: 18px minmax(0, 1fr);
+  grid-template-areas:
+    "rail intro"
+    "rail brief";
+  grid-template-rows: auto auto;
+  align-content: center;
+  gap: var(--space-6) clamp(24px, 4vw, 44px);
+  margin: 0 auto;
+  padding: clamp(36px, 7vh, 72px) clamp(8px, 3vw, 24px);
+}
+
+.home-fallline {
+  grid-area: rail;
+}
+
+.home-intro {
+  grid-area: intro;
+}
+
+.home-brief {
+  grid-area: brief;
 }
 
 .result-stage {
   display: grid;
-  grid-template-columns: 24px minmax(0, 680px);
-  justify-content: center;
-  gap: clamp(20px, 4vw, 46px);
-  min-height: calc(100dvh - 112px);
-  align-items: center;
-  padding: clamp(28px, 7vh, 72px) var(--space-4);
+  width: min(100%, 680px);
+  min-height: calc(100dvh - 104px);
+  align-content: center;
+  margin: 0 auto;
+  padding: clamp(48px, 9vh, 88px) var(--space-5);
 }
 
 .game-layout {
   display: grid;
-  grid-template-columns: minmax(150px, 0.9fr) auto minmax(168px, 1fr);
+  grid-template-columns: minmax(132px, 160px) auto minmax(148px, 176px);
   grid-template-areas:
     "hold board next"
     "stats board next";
   grid-template-rows: auto 1fr;
+  justify-content: center;
   align-items: start;
-  gap: var(--space-3) clamp(12px, 2vw, 22px);
+  gap: var(--space-3) clamp(16px, 2vw, 22px);
 }
 
 .hold-panel { grid-area: hold; }
@@ -87,8 +107,13 @@
   height: calc(var(--board-cell) * 20 + 16px);
   padding: 7px;
   border: 1px solid var(--border-strong);
-  background: #09131b;
-  box-shadow: 6px 6px 0 rgba(0, 0, 0, 0.35);
+  background: color-mix(in srgb, var(--color-well) 82%, var(--surface-1));
+  box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.45);
+}
+
+.board-frame:has(#game-board:focus-visible) {
+  outline: 3px solid var(--focus-ring);
+  outline-offset: 2px;
 }
 
 #game-board {
@@ -96,6 +121,7 @@
   width: calc(var(--board-cell) * 10);
   height: calc(var(--board-cell) * 20);
   background: var(--color-well);
+  outline: 0;
   touch-action: none;
 }
 
@@ -105,24 +131,46 @@
   top: 0;
   bottom: 0;
   left: -11px;
-  width: 3px;
+  width: 2px;
   background: var(--accent);
+}
+
+.fallline::after {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 10px;
+  height: 2px;
+  background: var(--accent);
+  content: "";
 }
 
 .fallline span {
   position: absolute;
   top: 6px;
-  left: -3px;
+  left: -4px;
   color: var(--accent);
-  font-family: ui-monospace, monospace;
-  font-size: 0.5rem;
-  letter-spacing: 0.14em;
+  font-family: ui-monospace, "Cascadia Mono", monospace;
+  font-size: 0.48rem;
+  letter-spacing: 0.12em;
   writing-mode: vertical-rl;
   transform: translateX(-100%);
 }
 
+html[data-touch-controls="on"] {
+  --board-cell: clamp(18px, min(calc((100vw - 440px) / 10), calc((100dvh - 290px) / 20)), 32px);
+}
+
+@media (any-pointer: coarse) {
+  html[data-touch-controls="auto"] {
+    --board-cell: clamp(18px, min(calc((100vw - 440px) / 10), calc((100dvh - 290px) / 20)), 32px);
+  }
+}
+
 @media (max-width: 739px) {
-  :root {
+  :root,
+  html[data-touch-controls="on"],
+  html[data-touch-controls="auto"] {
     --board-cell: clamp(18px, min(calc((100vw - 148px) / 10), calc((100dvh - 260px) / 20)), 28px);
   }
 
@@ -146,20 +194,23 @@
   }
 
   .game-header {
-    margin-bottom: 6px;
+    margin-bottom: 5px;
   }
 
-  .home-stage,
-  .result-stage {
-    grid-template-columns: 12px minmax(0, 1fr);
-    gap: var(--space-4);
+  .home-stage {
+    width: 100%;
     min-height: calc(100dvh - 72px);
+    grid-template-columns: 10px minmax(0, 1fr);
+    gap: var(--space-4) var(--space-4);
     align-content: center;
-    padding: var(--space-5) 0;
+    padding: clamp(22px, 5vh, 36px) 0;
   }
 
-  .home-brief {
-    grid-column: 2;
+  .result-stage {
+    width: 100%;
+    min-height: auto;
+    align-content: start;
+    padding: clamp(48px, 10vh, 72px) 0 var(--space-6);
   }
 
   .game-layout {
@@ -185,7 +236,7 @@
     width: calc(var(--board-cell) * 10 + 12px);
     height: calc(var(--board-cell) * 20 + 12px);
     padding: 5px;
-    box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.35);
+    box-shadow: 3px 3px 0 rgba(0, 0, 0, 0.45);
   }
 
   #game-board {
@@ -195,34 +246,17 @@
 
   .fallline {
     left: -7px;
-    width: 2px;
   }
 
   .fallline span {
     display: none;
   }
-
-}
-
-html[data-touch-controls="on"] {
-  --board-cell: clamp(18px, min(calc((100vw - 440px) / 10), calc((100dvh - 290px) / 20)), 32px);
-}
-
-@media (any-pointer: coarse) {
-  html[data-touch-controls="auto"] {
-    --board-cell: clamp(18px, min(calc((100vw - 440px) / 10), calc((100dvh - 290px) / 20)), 32px);
-  }
-}
-
-@media (max-width: 739px) {
-  html[data-touch-controls="on"],
-  html[data-touch-controls="auto"] {
-    --board-cell: clamp(18px, min(calc((100vw - 148px) / 10), calc((100dvh - 260px) / 20)), 28px);
-  }
 }
 
 @media (max-width: 339px) {
-  :root {
+  :root,
+  html[data-touch-controls="on"],
+  html[data-touch-controls="auto"] {
     --board-cell: clamp(18px, min(calc((100vw - 32px) / 10), calc((100dvh - 276px) / 20)), 24px);
   }
 

@@ -28,15 +28,13 @@ export function createResultScreen(): ResultScreenRefs {
   root.innerHTML = `
     <header class="result-header">
       <span class="result-brand">STACKFALL</span>
-      <span>RUN ARCHIVE / COMPLETE</span>
     </header>
     <main class="result-stage">
-      <div class="result-fallline" aria-hidden="true"><span></span></div>
       <div class="result-summary">
-        <span id="result-eyebrow" class="screen-kicker">RUN COMPLETE</span>
+        <p id="result-eyebrow" class="result-outcome">플레이 종료</p>
         <h1 id="result-title">게임 결과</h1>
         <div class="result-score">
-          <span>FINAL SCORE</span>
+          <span>최종 점수</span>
           <strong id="result-score-value">0</strong>
         </div>
         <dl class="result-stats">
@@ -70,7 +68,7 @@ export class ResultScreenView {
   constructor(private readonly refs: ResultScreenRefs) {}
 
   render(result: RunResult): void {
-    this.refs.eyebrow.textContent = result.isNewBest ? "NEW BEST / RUN COMPLETE" : "RUN COMPLETE";
+    this.refs.eyebrow.textContent = result.isNewBest ? "최고 기록 갱신" : "플레이 종료";
     this.refs.scoreValue.textContent = this.numberFormat.format(result.score);
     this.refs.linesValue.textContent = String(result.lines);
     this.refs.levelValue.textContent = String(result.level);

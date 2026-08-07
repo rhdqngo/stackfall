@@ -1,5 +1,6 @@
 .icon-button,
-.button {
+.button,
+.touch-controls button {
   transition:
     border-color var(--motion-interaction) var(--ease-enter),
     background-color var(--motion-interaction) var(--ease-enter),
@@ -7,10 +8,21 @@
     transform var(--motion-press) var(--ease-exit);
 }
 
-.pause-overlay,
-.home-stage,
-.result-stage {
-  animation: overlay-in var(--motion-overlay) var(--ease-enter);
+.pause-overlay {
+  animation: pause-scrim-in 100ms var(--ease-enter);
+}
+
+.pause-panel {
+  animation: pause-gate-in 120ms var(--ease-enter);
+}
+
+.result-summary {
+  animation: result-rail-lock 180ms var(--ease-enter);
+  transform-origin: bottom left;
+}
+
+.result-screen[data-new-best="true"] .result-score::after {
+  animation: result-best-lock 160ms var(--ease-enter);
 }
 
 .board-frame.is-feedback-rotate {
@@ -38,7 +50,22 @@
   animation: feedback-chip var(--motion-celebration) var(--ease-enter);
 }
 
-@keyframes overlay-in {
+@keyframes pause-scrim-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes pause-gate-in {
+  from { opacity: 0; transform: scale(0.99); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes result-rail-lock {
+  from { clip-path: inset(0 100% 0 0); }
+  to { clip-path: inset(0); }
+}
+
+@keyframes result-best-lock {
   from { opacity: 0; }
   to { opacity: 1; }
 }
@@ -60,11 +87,11 @@
 }
 
 @keyframes feedback-success {
-  50% { border-top-color: var(--success); }
+  50% { outline: 2px solid var(--success); }
 }
 
 @keyframes feedback-chip {
-  from { opacity: 0; transform: translateY(3px); }
+  from { opacity: 0; transform: translateY(2px); }
   to { opacity: 1; transform: translateY(0); }
 }
 
@@ -83,7 +110,8 @@
   .fallline,
   .status-rail,
   .hud-card,
-  .board-frame {
+  .board-frame,
+  .result-summary {
     forced-color-adjust: auto;
   }
 }

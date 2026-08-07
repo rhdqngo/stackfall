@@ -96,7 +96,7 @@ test("renders game over as a Result screen with retry and Home actions", async (
   await page.goto("/?fixture=game-over&freeze=1");
   await expect(page.locator("#result-screen")).toBeVisible();
   await expect(page.locator("#result-score-value")).toHaveText("12,480");
-  await expect(page.locator("#result-eyebrow")).toContainText("NEW BEST");
+  await expect(page.locator("#result-eyebrow")).toContainText("최고 기록 갱신");
   await expect(page.locator("#game-board")).toBeHidden();
   await expect(page.locator("#touch-controls")).toBeHidden();
   await expect(page.getByRole("button", { name: "다시 도전" })).toBeFocused();
@@ -201,7 +201,7 @@ test("guards browser Back during an active run and preserves the paused run on c
   const score = await page.locator("#score-value").textContent();
 
   await page.goBack();
-  const leaveDialog = page.getByRole("dialog", { name: "현재 게임을 끝내고 홈으로 이동할까요?" });
+  const leaveDialog = page.getByRole("dialog", { name: "게임을 끝내고 홈으로 이동할까요?" });
   await expect(leaveDialog).toBeVisible();
   await page.getByRole("button", { name: "게임 계속" }).click();
   await expect(leaveDialog).toBeHidden();
@@ -251,7 +251,9 @@ for (const viewport of [
       expect(box, `${selector} should be rendered`).not.toBeNull();
       expect(box!.x).toBeGreaterThanOrEqual(0);
       expect(box!.x + box!.width).toBeLessThanOrEqual(viewport.width + 1);
-      expect(box!.y + box!.height).toBeLessThanOrEqual(viewport.height + 1);
+      expect(box!.y + box!.height, `${selector} should fit vertically`).toBeLessThanOrEqual(
+        viewport.height + 1,
+      );
     }
     expect(errors).toEqual([]);
   });

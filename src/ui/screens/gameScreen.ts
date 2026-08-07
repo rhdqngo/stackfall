@@ -47,10 +47,8 @@ export function createGameScreen(): GameScreenRefs {
     <div id="game-play-surface" class="game-play-surface">
       <header class="game-header">
         <div class="game-wordmark">
-          <span>FALLING BLOCK / SOLO</span>
           <h1 id="game-screen-title">STACKFALL</h1>
         </div>
-        <div class="game-header-status" aria-hidden="true"><span>DROP AXIS</span><i></i></div>
         <button id="pause-action" class="icon-button game-pause-action" type="button">
           ${icon("pause")}<span>일시정지</span>
         </button>
@@ -70,7 +68,7 @@ export function createGameScreen(): GameScreenRefs {
           <div class="panel-heading"><h2 id="record-title">기록</h2></div>
           <dl class="stats-list">
             <div class="stat stat--score"><dt>점수</dt><dd id="score-value">0</dd></div>
-            <div class="stat"><dt>최고</dt><dd id="best-value">0</dd></div>
+            <div class="stat stat--best"><dt>최고</dt><dd id="best-value">0</dd></div>
             <div class="stat"><dt>라인</dt><dd id="lines-value">0</dd></div>
             <div class="stat"><dt>레벨</dt><dd id="level-value">1</dd></div>
           </dl>
@@ -91,9 +89,9 @@ export function createGameScreen(): GameScreenRefs {
         <section class="hud-card next-panel" aria-labelledby="next-title">
           <div class="panel-heading"><h2 id="next-title">다음</h2><span class="panel-state">3개</span></div>
           <ol class="next-list">
-            <li class="next-item next-item--primary"><span class="queue-index">01</span><canvas class="next-preview" aria-label="다음 블록 1"></canvas></li>
-            <li class="next-item"><span class="queue-index">02</span><canvas class="next-preview" aria-label="다음 블록 2"></canvas></li>
-            <li class="next-item"><span class="queue-index">03</span><canvas class="next-preview" aria-label="다음 블록 3"></canvas></li>
+            <li class="next-item next-item--primary"><span class="queue-index">1</span><canvas class="next-preview" aria-label="다음 블록 1"></canvas></li>
+            <li class="next-item"><span class="queue-index">2</span><canvas class="next-preview" aria-label="다음 블록 2"></canvas></li>
+            <li class="next-item"><span class="queue-index">3</span><canvas class="next-preview" aria-label="다음 블록 3"></canvas></li>
           </ol>
         </section>
       </main>

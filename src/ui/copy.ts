@@ -28,7 +28,7 @@ export function getPauseCopy(pauseReason: PauseReason = null): PauseCopy {
             ? "화면 크기가 복구되었습니다. 준비되면 계속하세요."
             : "준비되면 같은 흐름으로 돌아갑니다.";
   return {
-    eyebrow: pauseReason === "interruption" ? "FLOW INTERRUPTED" : "FLOW HELD",
+    eyebrow: pauseReason === "interruption" ? "자동 일시정지" : "사용자 일시정지",
     title: "일시정지",
     description,
     action: "계속하기",

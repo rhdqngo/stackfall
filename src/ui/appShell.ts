@@ -41,22 +41,22 @@ function globalLayers(): string {
   return `
     <dialog id="controls-dialog" class="modal-dialog" aria-labelledby="controls-dialog-title">
       <div class="dialog-heading">
-        <div><span class="dialog-kicker">CONTROL MAP</span><h2 id="controls-dialog-title">조작 도움말</h2></div>
+        <h2 id="controls-dialog-title">조작 도움말</h2>
         <button id="controls-close" class="dialog-close" type="button" aria-label="조작 도움말 닫기">×</button>
       </div>
-      <div class="control-guide-grid">
-        <div><kbd>←</kbd><kbd>→</kbd><span>좌우 이동</span></div>
-        <div><kbd>↓</kbd><span>소프트 드롭</span></div>
-        <div><kbd>Space</kbd><span>하드 드롭</span></div>
-        <div><kbd>Z</kbd><kbd>X</kbd><span>회전</span></div>
-        <div><kbd>C</kbd><kbd>Shift</kbd><span>홀드</span></div>
-        <div><kbd>P</kbd><kbd>Esc</kbd><span>일시정지</span></div>
-      </div>
+      <dl class="control-guide-grid">
+        <div><dt><kbd>←</kbd><kbd>→</kbd></dt><dd>좌우 이동</dd></div>
+        <div><dt><kbd>↓</kbd></dt><dd>소프트 드롭</dd></div>
+        <div><dt><kbd>Space</kbd></dt><dd>하드 드롭</dd></div>
+        <div><dt><kbd>Z</kbd><kbd>X</kbd></dt><dd>회전</dd></div>
+        <div><dt><kbd>C</kbd><kbd>Shift</kbd></dt><dd>홀드</dd></div>
+        <div><dt><kbd>P</kbd><kbd>Esc</kbd></dt><dd>일시정지</dd></div>
+      </dl>
     </dialog>
 
     <dialog id="settings-dialog" class="modal-dialog" aria-labelledby="settings-dialog-title">
       <div class="dialog-heading">
-        <div><span class="dialog-kicker">DISPLAY SYSTEM</span><h2 id="settings-dialog-title">화면 설정</h2></div>
+        <h2 id="settings-dialog-title">화면 설정</h2>
         <button id="settings-close" class="dialog-close" type="button" aria-label="설정 닫기">×</button>
       </div>
       <form class="settings-form">
@@ -77,7 +77,6 @@ function globalLayers(): string {
     </dialog>
 
     <dialog id="restart-dialog" class="modal-dialog modal-dialog--compact" aria-labelledby="restart-dialog-title">
-      <span class="dialog-kicker">RESET CURRENT RUN</span>
       <h2 id="restart-dialog-title">현재 게임을 다시 시작할까요?</h2>
       <p>점수와 쌓인 블록이 초기화됩니다.</p>
       <div class="dialog-actions">
@@ -87,8 +86,7 @@ function globalLayers(): string {
     </dialog>
 
     <dialog id="leave-run-dialog" class="modal-dialog modal-dialog--compact" aria-labelledby="leave-run-dialog-title">
-      <span class="dialog-kicker">LEAVE CURRENT RUN</span>
-      <h2 id="leave-run-dialog-title">현재 게임을 끝내고 홈으로 이동할까요?</h2>
+      <h2 id="leave-run-dialog-title">게임을 끝내고 홈으로 이동할까요?</h2>
       <p>점수와 쌓인 블록은 저장되지 않습니다.</p>
       <div class="dialog-actions">
         <button id="leave-run-cancel" class="button button--primary" type="button">게임 계속</button>
@@ -97,7 +95,6 @@ function globalLayers(): string {
     </dialog>
 
     <div id="viewport-notice" class="viewport-notice" role="alertdialog" aria-modal="true" aria-labelledby="viewport-notice-title" tabindex="-1" hidden>
-      <span class="dialog-kicker">VIEWPORT LIMITED</span>
       <strong id="viewport-notice-title">화면 공간이 부족합니다</strong>
       <p id="viewport-notice-message">기기를 세로로 돌리거나 브라우저 높이를 늘린 뒤 계속하세요.</p>
       <button id="viewport-home-action" class="button" type="button">홈으로</button>
@@ -156,10 +153,9 @@ export function showFatalError(root: HTMLElement, error: unknown): void {
   const detail = error instanceof Error ? error.message : "알 수 없는 초기화 오류";
   root.innerHTML = `
     <main class="fatal-error" role="alert">
-      <p class="eyebrow">INITIALIZATION ERROR</p>
       <h1>게임 화면을 열 수 없습니다</h1>
       <p>그래픽 환경을 다시 준비하려면 페이지를 새로고침하세요.</p>
-      <code>${detail.replaceAll("<", "&lt;").replaceAll(">", "&gt;")}</code>
+      <details><summary>오류 정보</summary><code>${detail.replaceAll("<", "&lt;").replaceAll(">", "&gt;")}</code></details>
       <button id="reload-application" class="button button--primary" type="button">새로고침</button>
     </main>
   `;
