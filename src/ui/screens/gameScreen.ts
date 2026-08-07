@@ -49,6 +49,14 @@ export function createGameScreen(): GameScreenRefs {
         <div class="game-wordmark">
           <h1 id="game-screen-title">STACKFALL</h1>
         </div>
+        <section class="cabinet-scoreboard" aria-label="현재 기록">
+          <dl class="stats-list">
+            <div class="stat stat--score"><dt>점수</dt><dd id="score-value">0</dd></div>
+            <div class="stat stat--best"><dt>최고</dt><dd id="best-value">0</dd></div>
+            <div class="stat"><dt>라인</dt><dd id="lines-value">0</dd></div>
+            <div class="stat"><dt>레벨</dt><dd id="level-value">1</dd></div>
+          </dl>
+        </section>
         <button id="pause-action" class="icon-button game-pause-action" type="button">
           ${icon("pause")}<span>일시정지</span>
         </button>
@@ -64,18 +72,8 @@ export function createGameScreen(): GameScreenRefs {
           <p class="panel-hint"><kbd>C</kbd><span>또는</span><kbd>Shift</kbd></p>
         </section>
 
-        <section class="hud-card stats-panel" aria-labelledby="record-title">
-          <div class="panel-heading"><h2 id="record-title">기록</h2></div>
-          <dl class="stats-list">
-            <div class="stat stat--score"><dt>점수</dt><dd id="score-value">0</dd></div>
-            <div class="stat stat--best"><dt>최고</dt><dd id="best-value">0</dd></div>
-            <div class="stat"><dt>라인</dt><dd id="lines-value">0</dd></div>
-            <div class="stat"><dt>레벨</dt><dd id="level-value">1</dd></div>
-          </dl>
-        </section>
-
         <section class="board-section" aria-label="게임 보드">
-          <div class="fallline" aria-hidden="true"><span>DROP AXIS</span></div>
+          <div class="feed-gate feed-gate--board" aria-hidden="true"><span></span></div>
           <div id="board-frame" class="board-frame">
             <canvas id="game-board" tabindex="0" aria-label="10열 20행 Stackfall 게임 보드" aria-describedby="game-instructions"></canvas>
           </div>
@@ -114,7 +112,7 @@ export function createGameScreen(): GameScreenRefs {
 
     <div id="pause-overlay" class="pause-overlay" role="dialog" aria-modal="true" aria-labelledby="pause-title" aria-describedby="pause-description" hidden>
       <div class="pause-panel">
-        <span id="pause-eyebrow" class="overlay-eyebrow">FLOW HELD</span>
+        <span id="pause-eyebrow" class="overlay-eyebrow">사용자 일시정지</span>
         <h2 id="pause-title">일시정지</h2>
         <p id="pause-description">준비되면 같은 흐름으로 돌아갑니다.</p>
         <button id="pause-continue-action" class="button button--primary" type="button">계속하기</button>

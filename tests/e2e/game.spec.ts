@@ -246,7 +246,7 @@ for (const viewport of targetViewports) {
     const overflow = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
     expect(overflow).toBeLessThanOrEqual(0);
 
-    const selectors = [".game-header", ".board-frame", ".stats-panel", ".preview-panel"];
+    const selectors = [".game-header", ".cabinet-scoreboard", ".board-frame", ".preview-panel"];
     if (viewport.touch) selectors.push(".touch-controls");
     for (const selector of selectors) {
       const box = await page.locator(selector).boundingBox();
