@@ -7,7 +7,6 @@
     transform var(--motion-press) var(--ease-exit);
 }
 
-.game-overlay,
 .pause-overlay,
 .home-stage,
 .result-stage {

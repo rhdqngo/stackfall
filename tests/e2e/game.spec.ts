@@ -109,6 +109,23 @@ test("renders game over as a Result screen with retry and Home actions", async (
   expect(errors).toEqual([]);
 });
 
+test("leaves a completed run for Home without exposing stale gameplay", async ({ page }) => {
+  const errors = collectConsoleErrors(page);
+  await page.goto("/?fixture=game-over&freeze=1");
+  await page.getByRole("button", { name: "홈으로" }).click();
+
+  await expect(page.locator("#home-screen")).toBeVisible();
+  await expect(page.locator("#result-screen")).toBeHidden();
+  await expect(page.locator("#game-screen")).toBeHidden();
+  await expect(page.getByRole("button", { name: "게임 시작" })).toBeFocused();
+  expect(new URL(page.url()).hash).toBe("#/");
+
+  await page.keyboard.press("KeyR");
+  await page.keyboard.press("ArrowLeft");
+  await expect(page.locator("#home-screen")).toBeVisible();
+  expect(errors).toEqual([]);
+});
+
 test("keeps Home usable on a tiny viewport and blocks only the attempted run", async ({ page }) => {
   const errors = collectConsoleErrors(page);
   await page.setViewportSize({ width: 320, height: 480 });
@@ -153,6 +170,29 @@ test("supports touch play only after entering Game", async ({ page }) => {
   expect(errors).toEqual([]);
 });
 
+test("pauses an active run when the viewport becomes unsafe and resumes only on request", async ({ page }) => {
+  const errors = collectConsoleErrors(page);
+  await page.setViewportSize({ width: 390, height: 844 });
+  await enableTouchControls(page);
+  await page.goto("/");
+  await page.getByRole("button", { name: "게임 시작" }).click();
+  await page.getByRole("button", { name: "하드 드롭" }).click();
+  const score = await page.locator("#score-value").textContent();
+
+  await page.setViewportSize({ width: 320, height: 480 });
+  await expect(page.getByRole("alertdialog", { name: "화면 공간이 부족합니다" })).toBeVisible();
+  await expect(page.locator("#game-status")).toHaveText("일시정지");
+  await expect(page.locator("#score-value")).toHaveText(score ?? "0");
+
+  await page.setViewportSize({ width: 390, height: 844 });
+  await expect(page.locator("#viewport-notice")).toBeHidden();
+  await expect(page.locator("#pause-overlay")).toBeVisible();
+  await expect(page.locator("#pause-description")).toContainText("화면 크기가 복구되었습니다");
+  await page.getByRole("button", { name: "계속하기" }).click();
+  await expect(page.locator("#game-status")).toHaveText("진행 중");
+  expect(errors).toEqual([]);
+});
+
 test("guards browser Back during an active run and preserves the paused run on cancel", async ({ page }) => {
   const errors = collectConsoleErrors(page);
   await page.goto("/");
@@ -176,14 +216,16 @@ test("guards browser Back during an active run and preserves the paused run on c
   expect(errors).toEqual([]);
 });
 
-test("normalizes direct Game and Result URLs without an in-memory run", async ({ page }) => {
-  const errors = collectConsoleErrors(page);
-  await page.goto("/#/game");
-  await expect(page.locator("#home-screen")).toBeVisible();
-  expect(new URL(page.url()).hash).toBe("#/");
-  await expect(page.locator("#status-toast")).toContainText("저장되지 않아 홈으로 이동");
-  expect(errors).toEqual([]);
-});
+for (const route of ["game", "result"]) {
+  test(`normalizes a direct ${route} URL without an in-memory run`, async ({ page }) => {
+    const errors = collectConsoleErrors(page);
+    await page.goto(`/#/${route}`);
+    await expect(page.locator("#home-screen")).toBeVisible();
+    expect(new URL(page.url()).hash).toBe("#/");
+    await expect(page.locator("#status-toast")).toContainText("저장되지 않아 홈으로 이동");
+    expect(errors).toEqual([]);
+  });
+}
 
 for (const viewport of [
   { name: "desktop", width: 1440, height: 900, touch: false },

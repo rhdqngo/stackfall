@@ -27,7 +27,7 @@ export function createResultScreen(): ResultScreenRefs {
   root.inert = true;
   root.innerHTML = `
     <header class="result-header">
-      <a class="result-brand" href="#/" aria-label="Stackfall 홈">STACKFALL</a>
+      <span class="result-brand">STACKFALL</span>
       <span>RUN ARCHIVE / COMPLETE</span>
     </header>
     <main class="result-stage">

@@ -60,9 +60,11 @@ async function measure(browser, name, viewport, touchControls) {
     const codes = ["ArrowLeft", "ArrowRight", "KeyX", "Space"];
     let actionIndex = 0;
     const actions = window.setInterval(() => {
-      const code = document.querySelector("#game-status")?.getAttribute("data-status") === "gameOver"
-        ? "Enter"
-        : codes[actionIndex++ % codes.length];
+      if (document.querySelector(".app-shell")?.getAttribute("data-active-screen") === "result") {
+        document.querySelector("#result-retry-action")?.click();
+        return;
+      }
+      const code = codes[actionIndex++ % codes.length];
       window.dispatchEvent(new KeyboardEvent("keydown", { code, bubbles: true }));
       window.dispatchEvent(new KeyboardEvent("keyup", { code, bubbles: true }));
     }, 140);

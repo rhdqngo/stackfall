@@ -360,19 +360,6 @@
   border-top-color: var(--accent);
 }
 
-.masthead-note {
-  justify-self: end;
-  margin: 0 0 1px;
-  color: var(--text-subtle);
-  font-size: 0.67rem;
-  letter-spacing: 0.08em;
-}
-
-.game-toolbar {
-  display: flex;
-  gap: 6px;
-}
-
 .icon-button,
 .button {
   min-height: 40px;
@@ -456,8 +443,7 @@
   border-bottom: 1px solid var(--border-subtle);
 }
 
-.panel-heading h2,
-.controls-panel h2 {
+.panel-heading h2 {
   margin: 0;
   color: var(--text-secondary);
   font-family: ui-monospace, "Cascadia Mono", monospace;
@@ -587,52 +573,10 @@
   color: var(--accent);
 }
 
-.game-overlay {
-  position: absolute;
-  z-index: 20;
-  inset: 7px;
-  display: grid;
-  align-content: center;
-  justify-items: center;
-  gap: var(--space-4);
-  padding: var(--space-5);
-  background:
-    linear-gradient(180deg, rgba(5, 13, 20, 0.82), rgba(5, 13, 20, 0.93)),
-    repeating-linear-gradient(135deg, transparent 0 10px, rgba(255, 255, 255, 0.02) 10px 11px);
-  text-align: center;
-}
-
-.overlay-copy {
-  display: grid;
-  gap: 6px;
-}
-
 .overlay-eyebrow {
   color: var(--accent);
   font-size: 0.59rem;
   letter-spacing: 0.16em;
-}
-
-.game-overlay strong {
-  color: var(--text-primary);
-  font-family: "Bahnschrift Condensed", "Arial Narrow", "Noto Sans KR", sans-serif;
-  font-size: clamp(2rem, 5vw, 3.1rem);
-  letter-spacing: -0.025em;
-}
-
-.game-overlay #overlay-description {
-  color: var(--text-secondary);
-  font-size: 0.78rem;
-}
-
-.game-overlay .button {
-  width: min(100%, 220px);
-}
-
-.overlay-shortcut {
-  margin: -7px 0 0;
-  color: var(--text-subtle);
-  font-size: 0.58rem;
 }
 
 .status-rail {
@@ -675,29 +619,10 @@
   pointer-events: none;
 }
 
-.controls-panel h2 {
-  padding-top: 10px;
-}
-
-.controls-panel ul {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px 14px;
-  margin: 0;
-  padding: 8px 0 0;
-  list-style: none;
-}
-
-.controls-panel li,
 .key-pair {
   display: flex;
   align-items: center;
   gap: 4px;
-}
-
-.controls-panel li {
-  color: var(--text-subtle);
-  font-size: 0.64rem;
 }
 
 .modal-dialog {
@@ -893,10 +818,6 @@ html[data-touch-controls="on"] .touch-controls {
   display: grid;
 }
 
-html[data-touch-controls="on"] .controls-panel {
-  display: none;
-}
-
 .viewport-notice {
   position: fixed;
   z-index: 110;
@@ -924,9 +845,6 @@ html[data-touch-controls="on"] .controls-panel {
     display: grid;
   }
 
-  html[data-touch-controls="auto"] .controls-panel {
-    display: none;
-  }
 }
 
 @media (max-width: 739px) {
@@ -1100,28 +1018,6 @@ html[data-touch-controls="on"] .controls-panel {
 
   .next-item .next-preview {
     height: clamp(48px, calc(var(--board-cell) * 4.5), 74px);
-  }
-
-  .game-overlay {
-    inset: 5px;
-    gap: 10px;
-    padding: 14px;
-  }
-
-  .game-overlay strong {
-    font-size: clamp(1.55rem, 7vw, 2.3rem);
-  }
-
-  .overlay-shortcut {
-    display: none;
-  }
-
-  .controls-panel h2 {
-    padding: 7px 0 0;
-  }
-
-  .controls-panel ul {
-    display: none;
   }
 
   .status-rail {

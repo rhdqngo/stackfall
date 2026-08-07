@@ -56,14 +56,12 @@ canvas:focus-visible,
 }
 
 .eyebrow,
-.masthead-note,
 .panel-state,
 .panel-hint,
 .empty-preview,
 .status-rail,
 .queue-index,
-.overlay-eyebrow,
-.overlay-shortcut {
+.overlay-eyebrow {
   font-family: ui-monospace, "Cascadia Mono", "Noto Sans Mono CJK KR", monospace;
 }
 
