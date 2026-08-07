@@ -68,8 +68,10 @@ export class ResultScreenView {
   constructor(private readonly refs: ResultScreenRefs) {}
 
   render(result: RunResult): void {
+    const formattedScore = this.numberFormat.format(result.score);
     this.refs.eyebrow.textContent = result.isNewBest ? "최고 기록 갱신" : "플레이 종료";
-    this.refs.scoreValue.textContent = this.numberFormat.format(result.score);
+    this.refs.scoreValue.textContent = formattedScore;
+    this.refs.scoreValue.dataset.length = formattedScore.length > 9 ? "long" : "standard";
     this.refs.linesValue.textContent = String(result.lines);
     this.refs.levelValue.textContent = String(result.level);
     this.refs.bestValue.textContent = this.numberFormat.format(result.bestScore);

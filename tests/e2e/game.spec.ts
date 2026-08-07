@@ -227,13 +227,15 @@ for (const route of ["game", "result"]) {
   });
 }
 
-for (const viewport of [
+const targetViewports = [
   { name: "desktop", width: 1440, height: 900, touch: false },
   { name: "small desktop", width: 1024, height: 768, touch: false },
   { name: "portrait tablet", width: 768, height: 1024, touch: false },
   { name: "mobile", width: 390, height: 844, touch: true },
   { name: "small mobile", width: 360, height: 640, touch: true },
-]) {
+] as const;
+
+for (const viewport of targetViewports) {
   test(`keeps the active Game UI inside the ${viewport.name} viewport`, async ({ page }) => {
     const errors = collectConsoleErrors(page);
     await page.setViewportSize({ width: viewport.width, height: viewport.height });
@@ -258,3 +260,77 @@ for (const viewport of [
     expect(errors).toEqual([]);
   });
 }
+
+for (const screen of [
+  { name: "Home", fixture: "ready", selector: "#home-screen" },
+  { name: "Result", fixture: "game-over", selector: "#result-screen" },
+] as const) {
+  for (const viewport of targetViewports) {
+    test(`keeps ${screen.name} inside the ${viewport.name} viewport`, async ({ page }) => {
+      await page.setViewportSize({ width: viewport.width, height: viewport.height });
+      if (viewport.touch) await enableTouchControls(page);
+      await page.goto(`/?fixture=${screen.fixture}&freeze=1`);
+      await expect(page.locator(screen.selector)).toBeVisible();
+
+      const geometry = await page.evaluate((selector) => {
+        const element = document.querySelector<HTMLElement>(selector);
+        if (!element) return null;
+        const rect = element.getBoundingClientRect();
+        return {
+          left: rect.left,
+          right: rect.right,
+          bottom: rect.bottom,
+          horizontalOverflow: document.documentElement.scrollWidth - window.innerWidth,
+        };
+      }, screen.selector);
+
+      expect(geometry).not.toBeNull();
+      expect(geometry!.left).toBeGreaterThanOrEqual(0);
+      expect(geometry!.right).toBeLessThanOrEqual(viewport.width + 1);
+      expect(geometry!.bottom).toBeLessThanOrEqual(viewport.height + 1);
+      expect(geometry!.horizontalOverflow).toBeLessThanOrEqual(0);
+    });
+  }
+}
+
+test("keeps long Korean copy and large run values readable on mobile", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await enableTouchControls(page);
+  await page.goto("/?fixture=ready&freeze=1");
+  await page.locator("#home-best-value").evaluate((element) => { element.textContent = "9,999,999,999"; });
+  await page.locator(".home-intro > p:not(.home-input-hint)").evaluate((element) => {
+    element.textContent = "조각을 정렬하고 다음 수를 준비하며, 빠르게 쌓이는 흐름을 끝까지 안정적으로 관리하세요.";
+  });
+  expect(await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth)).toBeLessThanOrEqual(0);
+
+  await page.goto("/?fixture=running&freeze=1");
+  await page.locator("#score-value").evaluate((element) => { element.textContent = "9,999,999,999"; });
+  await page.locator("#best-value").evaluate((element) => { element.textContent = "9,999,999,999"; });
+  await page.locator("#lines-value").evaluate((element) => { element.textContent = "999"; });
+  await page.locator("#level-value").evaluate((element) => { element.textContent = "99"; });
+  expect(await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth)).toBeLessThanOrEqual(0);
+
+  await page.goto("/?fixture=game-over&freeze=1");
+  await page.locator("#result-score-value").evaluate((element) => {
+    element.textContent = "9,999,999,999";
+    element.setAttribute("data-length", "long");
+  });
+  await page.locator("#result-best-value").evaluate((element) => { element.textContent = "9,999,999,999"; });
+  await page.locator("#result-lines-value").evaluate((element) => { element.textContent = "999"; });
+  await page.locator("#result-level-value").evaluate((element) => { element.textContent = "99"; });
+  await page.waitForTimeout(220);
+
+  const overflows = await page.locator(".result-stats, .result-actions").evaluateAll((elements) =>
+    elements.filter((element) => element.scrollWidth > element.clientWidth + 1).map((element) => element.className),
+  );
+  expect(overflows).toEqual([]);
+  const viewportOffenders = await page.evaluate(() => Array.from(document.querySelectorAll<HTMLElement>("body *"))
+    .map((element) => ({
+      id: element.id,
+      className: element.className,
+      rect: element.getBoundingClientRect().toJSON(),
+    }))
+    .filter(({ rect }) => rect.left < -1 || rect.right > window.innerWidth + 1));
+  expect(viewportOffenders).toEqual([]);
+  expect(await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth)).toBeLessThanOrEqual(0);
+});

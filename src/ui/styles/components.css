@@ -250,6 +250,7 @@
   --result-inset: clamp(24px, 5vw, 48px);
   position: relative;
   display: grid;
+  min-width: 0;
   gap: var(--space-4);
   padding: var(--space-5) 0 var(--space-4) var(--result-inset);
   border-left: 2px solid var(--accent);
@@ -284,6 +285,8 @@
 .result-score {
   position: relative;
   display: grid;
+  min-width: 0;
+  grid-template-columns: minmax(0, 1fr);
   gap: 8px;
   margin-left: calc(var(--result-inset) * -1);
   padding: var(--space-3) 0 var(--space-5) var(--result-inset);
@@ -297,6 +300,11 @@
   font-variant-numeric: tabular-nums;
   letter-spacing: -0.06em;
   line-height: 0.9;
+}
+
+#result-score-value[data-length="long"] {
+  font-size: clamp(3rem, 6vw, 4.5rem);
+  letter-spacing: -0.055em;
 }
 
 .result-screen[data-new-best="true"] .result-score::after {
@@ -954,11 +962,16 @@ html[data-touch-controls="on"] .touch-controls {
   }
 
   .result-stats {
+    grid-template-columns: minmax(48px, 0.65fr) minmax(48px, 0.65fr) minmax(110px, 1.7fr);
     gap: var(--space-3);
   }
 
   .result-stats dd {
     font-size: 0.95rem;
+  }
+
+  #result-score-value[data-length="long"] {
+    font-size: clamp(2rem, 8vw, 2.5rem);
   }
 
   .result-actions {
