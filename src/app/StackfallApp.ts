@@ -11,6 +11,7 @@ import { deriveFeedback, FeedbackController } from "../ui/feedback";
 import type { GameShellRefs } from "../ui/gameShell";
 import { GameHud } from "../ui/hud";
 import { TouchControls } from "../ui/touchControls";
+import { createDevFixture } from "./devFixtures";
 import type { PauseReason, UiPreferences, UiState } from "./uiState";
 
 const FIXED_STEP_MS = 1000 / 60;
@@ -18,6 +19,13 @@ const MAX_FRAME_DELTA_MS = 100;
 
 function createSeed(): number {
   return crypto.getRandomValues(new Uint32Array(1))[0] ?? 1;
+}
+
+function createInitialState(): GameState {
+  if (!import.meta.env.DEV) return createGame({ seed: createSeed() });
+  const fixture = new URLSearchParams(location.search).get("fixture");
+  const initial = createGame({ seed: fixture ? 73 : createSeed() });
+  return createDevFixture(fixture, initial);
 }
 
 function getBrowserStorage(): StorageLike | null {
@@ -29,7 +37,7 @@ function getBrowserStorage(): StorageLike | null {
 }
 
 export class StackfallApp {
-  private state: GameState = createGame({ seed: createSeed() });
+  private state: GameState = createInitialState();
   private readonly input = new InputController((command) => this.dispatch(command));
   private readonly hud: GameHud;
   private readonly announcer: StatusAnnouncer;
@@ -46,6 +54,7 @@ export class StackfallApp {
   private toastTimeout: number | null = null;
   private newBest = false;
   private viewportBlocked = false;
+  private readonly devFreeze = import.meta.env.DEV && new URLSearchParams(location.search).has("freeze");
   private readonly resizeObserver: ResizeObserver;
 
   constructor(private readonly refs: GameShellRefs) {
@@ -107,9 +116,13 @@ export class StackfallApp {
     this.input.update(timestamp);
     this.accumulator += delta;
 
-    while (this.accumulator >= FIXED_STEP_MS) {
-      this.setState(advanceGame(this.state, FIXED_STEP_MS));
-      this.accumulator -= FIXED_STEP_MS;
+    if (this.devFreeze) {
+      this.accumulator = 0;
+    } else {
+      while (this.accumulator >= FIXED_STEP_MS) {
+        this.setState(advanceGame(this.state, FIXED_STEP_MS));
+        this.accumulator -= FIXED_STEP_MS;
+      }
     }
 
     this.render();

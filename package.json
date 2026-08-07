@@ -12,6 +12,8 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:e2e": "node scripts/run-e2e.mjs",
+    "test:visual:update": "node scripts/run-e2e.mjs visual.spec.ts --update-snapshots",
+    "measure:performance": "node scripts/measure-performance.mjs",
     "check": "npm run lint && npm run test && npm run build && npm run test:e2e"
   },
   "devDependencies": {
