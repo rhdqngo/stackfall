@@ -24,7 +24,7 @@
   animation: attract-drop 2.4s steps(5, end) infinite;
 }
 
-[data-motion="reduced"] .attract-piece {
+[data-motion="reduced"] .app-screen .attract-piece {
   animation: none;
   transform: translateY(clamp(92px, 15vh, 156px));
 }

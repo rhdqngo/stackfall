@@ -72,6 +72,12 @@ test("preserves reduced motion after configuring it from Home", async ({ page })
   });
   expect(durations.animation).toBe("1e-05s");
   expect(durations.transition.split(", ").every((value) => value === "1e-05s")).toBe(true);
+  const attractState = await page.locator(".attract-piece").evaluate((element) => {
+    const styles = getComputedStyle(element);
+    return { animationName: styles.animationName, transform: styles.transform };
+  });
+  expect(attractState.animationName).toBe("none");
+  expect(attractState.transform).not.toBe("none");
   expect(errors).toEqual([]);
 });
 

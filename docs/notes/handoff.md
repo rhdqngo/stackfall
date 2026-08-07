@@ -1,5 +1,39 @@
 # 인수인계
 
+## 2026-08-07 Drop Cabinet / Feed Gate 전환
+
+Stackfall의 Home, Game, Result를 한 대의 낙하 블록 아케이드 기계가 대기·플레이·결과 모드로 전환되는 `Drop Cabinet / Feed Gate` 시각 체계로 교체했다.
+
+- Home은 큰 카피와 briefing 표 대신 CSS tetromino가 착지하는 attract well, 시작 조작, 최고 점수만 제공한다.
+- Game은 기록을 보드 위 scoreboard로 이동하고 Hold/Next를 cabinet cartridge bay로 통합했다. Feed Gate는 Canvas 위를 가리지 않으며 보드 포커스는 중립색으로 분리했다.
+- Result는 Gravity Rail의 L자 선을 제거하고 닫힌 Feed Gate, score window, 재도전 control deck을 사용한다.
+- Pause는 카드형 modal이 아니라 cabinet을 가로막는 정지 셔터로 바꿨다.
+- amber는 구조선에서 제거하고 시작, 선택, 잠금, 위험과 현재 상태에만 사용한다.
+- 게임 규칙, `GameState`, History, 저장 형식, Canvas renderer, DAS 150ms와 ARR 50ms는 변경하지 않았다.
+
+단계별 커밋:
+
+- `8d758c4` Turn the Home screen into an arcade attract cabinet
+- `6c9383a` Integrate the game board into a live arcade cabinet
+- `f40f937` Finish the cabinet result and pause states
+
+검증:
+
+- `npm run check`: ESLint 경고 0, Vitest 9개 파일/51개 테스트, TypeScript, production build, Chromium E2E 50개 통과
+- visual fixture 17개 유지 및 Home/Game/Result/Pause/Hold/high-stack/mobile 이미지를 직접 재검토
+- reduced motion에서 Home attract animation name이 제거되고 정적 착지 상태가 유지됨
+- 1440×900, 1024×768, 768×1024, 390×844, 360×640 geometry/overflow 검증 통과
+- 성능 30초 측정: desktop/mobile 평균 16.66ms, p95 16.7ms, max 16.8ms, heap delta 0, DOM 252개
+- desktop long task 0, mobile long task 1
+
+남은 수동 검증:
+
+- 실제 iPhone Safari/Android Chrome의 safe area, 동적 `dvh`, 멀티터치, pointer cancellation
+- 실제 OS forced-colors/high-contrast와 브라우저 200% 확대
+- 장시간 플레이에서 DAS/ARR 체감 확인
+
+아래 내용은 이전 Gravity Rail 구현 시점의 기록이며 현재 시각 체계보다 오래된 정보다.
+
 **마지막 갱신**: 2026-08-07
 
 **브랜치**: master
