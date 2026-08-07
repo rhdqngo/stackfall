@@ -1,0 +1,33 @@
+# 개인 설정 (머신 로컬)
+# AGENTS.override.md 는 있으면 AGENTS.md 대신 읽힙니다. 커밋하면 팀 설정을 덮어버립니다.
+AGENTS.override.md
+
+# 비밀
+.env
+.env.*
+!.env.example
+secrets/
+*.pem
+
+# 의존성 / 빌드 산출물
+node_modules/
+dist/
+build/
+test-results/
+playwright-report/
+coverage/
+.next/
+target/
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+.ruff_cache/
+*.egg-info/
+
+# 에디터 / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
