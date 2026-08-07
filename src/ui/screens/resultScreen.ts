@@ -30,21 +30,24 @@ export function createResultScreen(): ResultScreenRefs {
       <span class="result-brand">STACKFALL</span>
     </header>
     <main class="result-stage">
-      <div class="result-summary">
-        <p id="result-eyebrow" class="result-outcome">플레이 종료</p>
-        <h1 id="result-title">게임 결과</h1>
-        <div class="result-score">
-          <span>최종 점수</span>
-          <strong id="result-score-value">0</strong>
-        </div>
-        <dl class="result-stats">
-          <div><dt>라인</dt><dd id="result-lines-value">0</dd></div>
-          <div><dt>레벨</dt><dd id="result-level-value">1</dd></div>
-          <div><dt>최고 점수</dt><dd id="result-best-value">0</dd></div>
-        </dl>
-        <div class="result-actions">
-          <button id="result-retry-action" class="button button--primary" type="button">다시 도전</button>
-          <button id="result-home-action" class="button" type="button">홈으로</button>
+      <div class="result-cabinet">
+        <div class="feed-gate feed-gate--locked" aria-hidden="true"><span></span></div>
+        <div class="result-summary">
+          <p id="result-eyebrow" class="result-outcome">플레이 종료</p>
+          <h1 id="result-title">게임 결과</h1>
+          <div class="result-score">
+            <span>최종 점수</span>
+            <strong id="result-score-value">0</strong>
+          </div>
+          <dl class="result-stats">
+            <div><dt>라인</dt><dd id="result-lines-value">0</dd></div>
+            <div><dt>레벨</dt><dd id="result-level-value">1</dd></div>
+            <div><dt>최고 점수</dt><dd id="result-best-value">0</dd></div>
+          </dl>
+          <div class="result-actions">
+            <button id="result-retry-action" class="button button--primary" type="button">다시 도전</button>
+            <button id="result-home-action" class="button" type="button">홈으로</button>
+          </div>
         </div>
       </div>
     </main>

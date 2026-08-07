@@ -16,13 +16,8 @@
   animation: pause-gate-in 120ms var(--ease-enter);
 }
 
-.result-summary {
-  animation: result-rail-lock 180ms var(--ease-enter);
-  transform-origin: bottom left;
-}
-
-.result-screen[data-new-best="true"] .result-score::after {
-  animation: result-best-lock 160ms var(--ease-enter);
+.result-screen[data-new-best="true"] .feed-gate--locked::after {
+  animation: result-lock-indicator 160ms var(--ease-enter);
 }
 
 .app-screen:not([hidden]) .attract-piece {
@@ -69,12 +64,7 @@
   to { opacity: 1; transform: scale(1); }
 }
 
-@keyframes result-rail-lock {
-  from { clip-path: inset(0 100% 0 0); }
-  to { clip-path: inset(0); }
-}
-
-@keyframes result-best-lock {
+@keyframes result-lock-indicator {
   from { opacity: 0; }
   to { opacity: 1; }
 }
@@ -126,11 +116,11 @@
 }
 
 @media (forced-colors: active) {
-  .fallline,
+  .feed-gate,
   .status-rail,
   .hud-card,
   .board-frame,
-  .result-summary {
+  .result-cabinet {
     forced-color-adjust: auto;
   }
 }

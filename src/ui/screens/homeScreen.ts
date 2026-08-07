@@ -25,7 +25,6 @@ export function createHomeScreen(): HomeScreenRefs {
     <header class="home-header">
       <div class="brand-block brand-block--hero">
         <h1 id="home-title">STACKFALL</h1>
-        <p class="eyebrow">1인 낙하 블록</p>
       </div>
       <nav class="screen-utilities" aria-label="홈 메뉴">
         <button id="home-controls-action" class="icon-button" type="button">${icon("help")}<span>조작 도움말</span></button>
