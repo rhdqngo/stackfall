@@ -25,6 +25,15 @@
   animation: result-best-lock 160ms var(--ease-enter);
 }
 
+.app-screen:not([hidden]) .attract-piece {
+  animation: attract-drop 2.4s steps(5, end) infinite;
+}
+
+[data-motion="reduced"] .attract-piece {
+  animation: none;
+  transform: translateY(clamp(92px, 15vh, 156px));
+}
+
 .board-frame.is-feedback-rotate {
   animation: feedback-rotate 70ms var(--ease-enter);
 }
@@ -70,6 +79,12 @@
   to { opacity: 1; }
 }
 
+@keyframes attract-drop {
+  0%, 12% { transform: translateY(0); }
+  72%, 88% { transform: translateY(clamp(92px, 15vh, 156px)); }
+  100% { transform: translateY(0); }
+}
+
 @keyframes feedback-rotate {
   50% { border-color: var(--active-stroke); }
 }
@@ -103,6 +118,10 @@
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
+  }
+
+  .attract-piece {
+    transform: translateY(clamp(92px, 15vh, 156px));
   }
 }
 

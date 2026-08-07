@@ -22,7 +22,7 @@
   align-items: end;
   gap: var(--space-5);
   padding-bottom: 12px;
-  border-bottom: 1px solid var(--border-subtle);
+  border-bottom: 0;
 }
 
 .home-header,
@@ -45,29 +45,29 @@
 
 .home-stage {
   display: grid;
-  width: min(100%, 880px);
+  width: min(100%, 760px);
   min-height: calc(100dvh - 128px);
-  grid-template-columns: 18px minmax(0, 1fr);
+  grid-template-columns: minmax(220px, 0.82fr) minmax(280px, 1.18fr);
   grid-template-areas:
-    "rail intro"
-    "rail brief";
-  grid-template-rows: auto auto;
+    "attract intro"
+    "attract best";
+  grid-template-rows: 1fr auto;
   align-content: center;
-  gap: var(--space-6) clamp(24px, 4vw, 44px);
+  gap: var(--space-4) clamp(28px, 5vw, 52px);
   margin: 0 auto;
-  padding: clamp(36px, 7vh, 72px) clamp(8px, 3vw, 24px);
+  padding: clamp(28px, 5vh, 44px);
 }
 
-.home-fallline {
-  grid-area: rail;
+.attract-cabinet {
+  grid-area: attract;
 }
 
 .home-intro {
   grid-area: intro;
 }
 
-.home-brief {
-  grid-area: brief;
+.home-best {
+  grid-area: best;
 }
 
 .result-stage {
@@ -200,10 +200,15 @@ html[data-touch-controls="on"] {
   .home-stage {
     width: 100%;
     min-height: calc(100dvh - 72px);
-    grid-template-columns: 10px minmax(0, 1fr);
-    gap: var(--space-4) var(--space-4);
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas:
+      "attract"
+      "intro"
+      "best";
+    grid-template-rows: auto auto auto;
+    gap: var(--space-3);
     align-content: center;
-    padding: clamp(22px, 5vh, 36px) 0;
+    padding: clamp(12px, 2.5vh, 22px) 0 8px;
   }
 
   .result-stage {

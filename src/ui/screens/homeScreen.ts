@@ -24,8 +24,8 @@ export function createHomeScreen(): HomeScreenRefs {
   root.innerHTML = `
     <header class="home-header">
       <div class="brand-block brand-block--hero">
-        <p class="eyebrow">1인 낙하 블록</p>
         <h1 id="home-title">STACKFALL</h1>
+        <p class="eyebrow">1인 낙하 블록</p>
       </div>
       <nav class="screen-utilities" aria-label="홈 메뉴">
         <button id="home-controls-action" class="icon-button" type="button">${icon("help")}<span>조작 도움말</span></button>
@@ -33,26 +33,27 @@ export function createHomeScreen(): HomeScreenRefs {
       </nav>
     </header>
     <main class="home-stage">
-      <div class="home-fallline" aria-hidden="true"></div>
+      <div class="attract-cabinet" aria-hidden="true">
+        <div class="feed-gate feed-gate--attract"><span></span></div>
+        <div class="attract-well">
+          <div class="attract-piece attract-piece--falling">
+            <i></i><i></i><i></i><i></i>
+          </div>
+          <div class="attract-stack">
+            <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+          </div>
+        </div>
+        <div class="cabinet-status"><span>대기 중</span><i></i></div>
+      </div>
       <div class="home-intro">
-        <h2><span>빈틈을 읽고</span><span>흐름을 지키세요.</span></h2>
-        <p>조각을 정렬하고, 다음 수를 준비하고, 쌓인 흐름을 끝까지 관리하세요.</p>
+        <h2>빈틈을 읽고<br>흐름을 지키세요.</h2>
+        <p>조각을 맞추고 다음 수를 준비하세요.</p>
         <button id="home-start-action" class="button button--primary home-start" type="button">게임 시작</button>
         <p id="home-input-hint" class="home-input-hint"><kbd>Enter</kbd> 키로 바로 시작</p>
       </div>
-      <aside class="home-brief" aria-label="게임 시작 정보">
-        <div class="home-best">
-          <span>최고 점수</span>
-          <strong id="home-best-value">0</strong>
-        </div>
-        <div class="home-control-primer">
-          <h2>핵심 조작</h2>
-          <dl>
-            <div><dt>이동</dt><dd><kbd>←</kbd><kbd>→</kbd><kbd>↓</kbd></dd></div>
-            <div><dt>회전</dt><dd><kbd>Z</kbd><kbd>X</kbd></dd></div>
-            <div><dt>놓기 / 홀드</dt><dd><kbd>Space</kbd><kbd>C</kbd></dd></div>
-          </dl>
-        </div>
+      <aside class="home-best" aria-label="최고 점수">
+        <span>최고 점수</span>
+        <strong id="home-best-value">0</strong>
       </aside>
     </main>
   `;

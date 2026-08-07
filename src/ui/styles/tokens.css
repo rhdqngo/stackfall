@@ -1,18 +1,18 @@
 :root {
   color-scheme: dark;
-  --color-bg: #0a1116;
-  --color-well: #03090e;
-  --surface-1: #14222b;
-  --surface-2: color-mix(in srgb, var(--surface-1) 92%, var(--text-primary));
-  --surface-raised: color-mix(in srgb, var(--surface-1) 86%, var(--text-primary));
-  --text-primary: #eff1ea;
-  --text-secondary: #9ba8ad;
+  --color-bg: #0c1317;
+  --color-well: #04080b;
+  --surface-1: #172127;
+  --surface-2: #26353d;
+  --surface-raised: #31424a;
+  --text-primary: #f0ede3;
+  --text-secondary: #93a2a8;
   --text-subtle: color-mix(in srgb, var(--text-secondary) 74%, var(--color-bg));
   --border-subtle: color-mix(in srgb, var(--text-secondary) 28%, transparent);
   --border-strong: color-mix(in srgb, var(--text-secondary) 58%, transparent);
-  --accent: #e6aa3f;
+  --accent: #f0a62e;
   --accent-hover: color-mix(in srgb, var(--accent) 88%, var(--text-primary));
-  --accent-on: #171005;
+  --accent-on: #181005;
   --success: #68c48b;
   --warning: var(--accent);
   --danger: #e56b6f;
@@ -37,9 +37,9 @@
   --space-4: 16px;
   --space-5: 24px;
   --space-6: 32px;
-  --radius-surface: 0;
+  --radius-surface: 2px;
   --radius-control: 3px;
-  --radius-dialog: 4px;
+  --radius-dialog: 3px;
   --focus-ring: #f5d27a;
   --motion-press: 70ms;
   --motion-interaction: 120ms;
@@ -47,7 +47,9 @@
   --motion-celebration: 220ms;
   --ease-enter: cubic-bezier(0.2, 0.8, 0.2, 1);
   --ease-exit: cubic-bezier(0.4, 0, 1, 1);
-  --board-cell: clamp(24px, min(calc((100vw - 440px) / 10), calc((100dvh - 180px) / 20)), 34px);
+  --cabinet-highlight: rgba(240, 237, 227, 0.22);
+  --cabinet-shadow: rgba(0, 0, 0, 0.58);
+  --board-cell: clamp(24px, min(calc((100vw - 440px) / 10), calc((100dvh - 190px) / 20)), 34px);
 }
 
 [data-contrast="high"] {
