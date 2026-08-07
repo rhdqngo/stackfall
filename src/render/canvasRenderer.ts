@@ -7,16 +7,7 @@ import {
   type GameState,
   type PieceType,
 } from "../game/types";
-
-const COLORS: Record<PieceType, string> = {
-  I: "#48c7e8",
-  J: "#5278d7",
-  L: "#e98a3a",
-  O: "#f2c94c",
-  S: "#5abf78",
-  T: "#a86ad8",
-  Z: "#df5d62",
-};
+import type { CanvasTheme } from "./canvasTheme";
 
 function getCanvasContext(canvas: HTMLCanvasElement): {
   context: CanvasRenderingContext2D;
@@ -46,19 +37,50 @@ function drawBlock(
   y: number,
   size: number,
   color: string,
+  theme: CanvasTheme,
+  kind: "locked" | "active" = "locked",
   alpha = 1,
 ): void {
   const gap = Math.max(1, size * 0.055);
+  const insetX = x + gap;
+  const insetY = y + gap;
+  const blockSize = size - gap * 2;
   context.save();
   context.globalAlpha = alpha;
   context.fillStyle = color;
-  context.fillRect(x + gap, y + gap, size - gap * 2, size - gap * 2);
-  context.fillStyle = "rgba(255, 255, 255, 0.18)";
-  context.fillRect(x + gap, y + gap, size - gap * 2, Math.max(1, size * 0.07));
+  context.fillRect(insetX, insetY, blockSize, blockSize);
+  context.fillStyle = theme.blockEdge;
+  context.fillRect(insetX, insetY, blockSize, Math.max(1, size * 0.08));
+  context.fillStyle = theme.blockShade;
+  context.fillRect(insetX, insetY + blockSize - Math.max(1, size * 0.08), blockSize, Math.max(1, size * 0.08));
+  context.strokeStyle = kind === "active" ? theme.activeStroke : theme.blockShade;
+  context.lineWidth = kind === "active" ? Math.max(1.25, size * 0.055) : 1;
+  context.strokeRect(insetX + 0.5, insetY + 0.5, blockSize - 1, blockSize - 1);
   context.restore();
 }
 
-export function renderBoard(canvas: HTMLCanvasElement, state: GameState): void {
+function drawGhost(
+  context: CanvasRenderingContext2D,
+  x: number,
+  y: number,
+  size: number,
+  color: string,
+  theme: CanvasTheme,
+): void {
+  const gap = Math.max(2, size * 0.12);
+  context.save();
+  context.globalAlpha = theme.ghostFillAlpha;
+  context.fillStyle = color;
+  context.fillRect(x + gap, y + gap, size - gap * 2, size - gap * 2);
+  context.globalAlpha = 1;
+  context.strokeStyle = theme.ghostStroke;
+  context.lineWidth = Math.max(1, size * 0.055);
+  context.setLineDash([Math.max(2, size * 0.2), Math.max(2, size * 0.12)]);
+  context.strokeRect(x + gap, y + gap, size - gap * 2, size - gap * 2);
+  context.restore();
+}
+
+export function renderBoard(canvas: HTMLCanvasElement, state: GameState, theme: CanvasTheme): void {
   const canvasData = getCanvasContext(canvas);
   if (!canvasData) return;
   const { context, width, height } = canvasData;
@@ -69,11 +91,19 @@ export function renderBoard(canvas: HTMLCanvasElement, state: GameState): void {
   const offsetY = (height - boardHeight) / 2;
 
   context.clearRect(0, 0, width, height);
-  context.fillStyle = "#07111c";
+  context.fillStyle = theme.well;
   context.fillRect(offsetX, offsetY, boardWidth, boardHeight);
 
-  context.strokeStyle = "rgba(201, 217, 225, 0.08)";
+  context.fillStyle = theme.dangerWash;
+  context.fillRect(offsetX, offsetY, boardWidth, cellSize * 4);
+  context.strokeStyle = theme.dangerLine;
   context.lineWidth = 1;
+  context.beginPath();
+  context.moveTo(offsetX, offsetY + cellSize * 4);
+  context.lineTo(offsetX + boardWidth, offsetY + cellSize * 4);
+  context.stroke();
+
+  context.strokeStyle = theme.grid;
   for (let x = 0; x <= BOARD_WIDTH; x += 1) {
     context.beginPath();
     context.moveTo(offsetX + x * cellSize, offsetY);
@@ -90,7 +120,16 @@ export function renderBoard(canvas: HTMLCanvasElement, state: GameState): void {
   for (let y = HIDDEN_ROWS; y < state.board.length; y += 1) {
     for (let x = 0; x < BOARD_WIDTH; x += 1) {
       const cell = state.board[y]?.[x];
-      if (cell) drawBlock(context, offsetX + x * cellSize, offsetY + (y - HIDDEN_ROWS) * cellSize, cellSize, COLORS[cell]);
+      if (cell) {
+        drawBlock(
+          context,
+          offsetX + x * cellSize,
+          offsetY + (y - HIDDEN_ROWS) * cellSize,
+          cellSize,
+          theme.pieces[cell],
+          theme,
+        );
+      }
     }
   }
 
@@ -98,13 +137,13 @@ export function renderBoard(canvas: HTMLCanvasElement, state: GameState): void {
   const ghostY = getGhostY(state.board, state.active);
   for (const cell of getPieceCells({ ...state.active, y: ghostY })) {
     if (cell.y >= HIDDEN_ROWS) {
-      drawBlock(
+      drawGhost(
         context,
         offsetX + cell.x * cellSize,
         offsetY + (cell.y - HIDDEN_ROWS) * cellSize,
         cellSize,
-        COLORS[state.active.type],
-        0.22,
+        theme.pieces[state.active.type],
+        theme,
       );
     }
   }
@@ -116,13 +155,20 @@ export function renderBoard(canvas: HTMLCanvasElement, state: GameState): void {
         offsetX + cell.x * cellSize,
         offsetY + (cell.y - HIDDEN_ROWS) * cellSize,
         cellSize,
-        COLORS[state.active.type],
+        theme.pieces[state.active.type],
+        theme,
+        "active",
       );
     }
   }
 }
 
-export function renderPreview(canvas: HTMLCanvasElement, type: PieceType | null): void {
+export function renderPreview(
+  canvas: HTMLCanvasElement,
+  type: PieceType | null,
+  theme: CanvasTheme,
+  muted = false,
+): void {
   const canvasData = getCanvasContext(canvas);
   if (!canvasData) return;
   const { context, width, height } = canvasData;
@@ -141,6 +187,15 @@ export function renderPreview(canvas: HTMLCanvasElement, type: PieceType | null)
   const offsetY = (height - pieceHeight * size) / 2 - minY * size;
 
   for (const cell of cells) {
-    drawBlock(context, offsetX + cell.x * size, offsetY + cell.y * size, size, COLORS[type]);
+    drawBlock(
+      context,
+      offsetX + cell.x * size,
+      offsetY + cell.y * size,
+      size,
+      theme.pieces[type],
+      theme,
+      "locked",
+      muted ? 0.42 : 1,
+    );
   }
 }

@@ -1,0 +1,175 @@
+.app-shell {
+  width: min(calc(100% - 32px), 1080px);
+  min-height: 100dvh;
+  margin: 0 auto;
+  padding: 16px 0 12px;
+}
+
+.masthead {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: end;
+  gap: var(--space-5);
+  min-height: 58px;
+  margin-bottom: var(--space-3);
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.game-layout {
+  display: grid;
+  grid-template-columns: minmax(150px, 0.9fr) auto minmax(168px, 1fr);
+  grid-template-areas:
+    "hold board next"
+    "stats board next";
+  grid-template-rows: auto 1fr;
+  align-items: start;
+  gap: var(--space-3) clamp(12px, 2vw, 22px);
+}
+
+.hold-panel { grid-area: hold; }
+.stats-panel { grid-area: stats; }
+.board-section { grid-area: board; }
+.next-panel { grid-area: next; }
+
+.board-section {
+  position: relative;
+  min-width: 0;
+}
+
+.board-frame {
+  position: relative;
+  width: calc(var(--board-cell) * 10 + 16px);
+  height: calc(var(--board-cell) * 20 + 16px);
+  padding: 7px;
+  border: 1px solid var(--border-strong);
+  background: #09131b;
+  box-shadow: 6px 6px 0 rgba(0, 0, 0, 0.35);
+}
+
+#game-board {
+  display: block;
+  width: calc(var(--board-cell) * 10);
+  height: calc(var(--board-cell) * 20);
+  background: var(--color-well);
+  touch-action: none;
+}
+
+.fallline {
+  position: absolute;
+  z-index: 10;
+  top: 0;
+  bottom: 0;
+  left: -11px;
+  width: 3px;
+  background: var(--accent);
+}
+
+.fallline span {
+  position: absolute;
+  top: 6px;
+  left: -3px;
+  color: var(--accent);
+  font-family: ui-monospace, monospace;
+  font-size: 0.5rem;
+  letter-spacing: 0.14em;
+  writing-mode: vertical-rl;
+  transform: translateX(-100%);
+}
+
+.controls-panel {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  gap: var(--space-4);
+  margin-top: var(--space-3);
+  border-top: 1px solid var(--border-subtle);
+}
+
+@media (max-width: 739px) {
+  :root {
+    --board-cell: clamp(18px, min(calc((100vw - 148px) / 10), calc((100dvh - 228px) / 20)), 28px);
+  }
+
+  .app-shell {
+    width: auto;
+    min-height: 100dvh;
+    padding: max(8px, env(safe-area-inset-top)) max(12px, env(safe-area-inset-right)) max(8px, env(safe-area-inset-bottom)) max(12px, env(safe-area-inset-left));
+  }
+
+  .masthead {
+    grid-template-columns: 1fr auto;
+    min-height: 38px;
+    margin-bottom: 6px;
+    padding-bottom: 6px;
+  }
+
+  .masthead-note {
+    display: none;
+  }
+
+  .game-layout {
+    grid-template-columns: minmax(48px, 1fr) auto minmax(48px, 1fr);
+    grid-template-areas:
+      "stats stats stats"
+      "hold board next";
+    gap: 6px 8px;
+    justify-content: center;
+  }
+
+  .stats-panel {
+    align-self: stretch;
+  }
+
+  .hold-panel,
+  .next-panel {
+    align-self: start;
+    overflow: hidden;
+  }
+
+  .board-frame {
+    width: calc(var(--board-cell) * 10 + 12px);
+    height: calc(var(--board-cell) * 20 + 12px);
+    padding: 5px;
+    box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.35);
+  }
+
+  #game-board {
+    width: calc(var(--board-cell) * 10);
+    height: calc(var(--board-cell) * 20);
+  }
+
+  .fallline {
+    left: -7px;
+    width: 2px;
+  }
+
+  .fallline span {
+    display: none;
+  }
+
+  .controls-panel {
+    display: grid;
+    grid-template-columns: 1fr;
+    min-height: 28px;
+    margin-top: 6px;
+  }
+}
+
+@media (max-width: 339px) {
+  :root {
+    --board-cell: clamp(18px, min(calc((100vw - 32px) / 10), calc((100dvh - 276px) / 20)), 24px);
+  }
+
+  .game-layout {
+    grid-template-columns: 1fr 1fr;
+    grid-template-areas:
+      "stats stats"
+      "hold next"
+      "board board";
+  }
+
+  .board-section {
+    justify-self: center;
+  }
+}
