@@ -4,11 +4,13 @@
 
 **브랜치**: master
 
-**상태**: Stackfall Home/Game/Result Screen 개편 완료, push·배포 안 함
+**상태**: Stackfall Home/Game/Result Gravity Rail 시각 완성도 개선 완료, push·배포 안 함
 
 ## 완료한 목표
 
 기존 단일 `GameShell`에 섞여 있던 시작, 플레이, 완료 역할을 `Home`, `Game`, `Result`의 세 최상위 Screen으로 분리했다. 게임 규칙과 입력 타이밍은 유지하고, 설정·조작 도움말·재시작·run 종료 확인은 현재 맥락으로 돌아오는 dialog, pause는 게임 위 overlay, 저장 복구는 toast, 작은 viewport는 blocking notice로 유지했다.
+
+후속 시각 작업에서 dark+amber 기반을 `Gravity Rail / Lockline` 문법으로 정리했다. Home은 시작 lane, Game은 보드 왼쪽 낙하 rail, Result는 점수가 정착하는 L자 lockline을 각각 한 번만 강하게 사용한다. 반복 카드·장식 영문·기능 없는 hairline을 줄이고 모바일 정보 밀도와 예외 상태까지 같은 재료 규칙으로 맞췄다.
 
 상태와 내비게이션 결정은 `docs/plans/stackfall-screen-architecture.md`, 제품 UI의 원래 범위는 `docs/plans/stackfall-product-ui.md`에 있다.
 
@@ -25,12 +27,19 @@
 - Result 진입 전에 최종 점수와 최고 점수를 확정·저장한다. 재도전은 새 Game으로 교체하고 Home 이동은 완료 run을 폐기한다.
 - Home은 작은 viewport에서도 접근 가능하며 게임 시작 시에만 공간을 검사한다. 실행 중 화면 축소는 run을 자동 pause하고 크기 복구 뒤 명시적인 계속하기를 요구한다.
 - 기존 amber 낙하 축과 계기판 스타일을 유지하되 Home은 진입 행동, Game은 board, Result는 최종 점수에 가장 강한 시각적 무게를 둔다.
+- `tokens.css`의 Carbon Field, Well Depth, Gunmetal Plate, Chalk, Slate Label, Load Amber 여섯 색을 UI와 Canvas의 의미 토큰에 매핑했다.
+- Home의 좌우 hero/card 구도를 단일 시작 lane과 briefing strip으로 교체하고, Game side HUD 표면을 줄여 board를 중심에 뒀다.
+- Result의 카드 배경을 없애고 세로 rail과 최종 점수 아래 수평 lockline을 연결했다. 긴 점수는 표시 길이에서 파생한 DOM 속성으로만 축소하며 게임 상태를 추가하지 않는다.
+- Pause는 board 폭의 halt gate, controls는 semantic `dl`, settings는 borderless fieldset 행으로 정리했다. viewport notice 중에는 배경 Screen을 숨기고 fatal error 상세는 접힌 상태로 둔다.
+- 첫 시각 비평에서 작은 Home overflow와 중복 기술 문구를 제거했고, 두 번째 비평에서 Result header hairline, viewport 배경 누출, dialog 제목 orphan을 제거했다.
 
 ## 이번 작업의 단계별 커밋
 
 - `50eaf6f` Split Stackfall into focused Home, Game, and Result screens
 - `8447a5d` Harden Screen navigation and lifecycle edge cases
-- README, Screen 아키텍처, 이 인수인계는 마지막 문서 커밋에 포함한다.
+- `f9647b6` Refine Stackfall with the Gravity Rail visual system
+- `5af2b2c` Expand visual and responsive regression coverage
+- 이 인수인계 갱신은 마지막 문서 커밋에 포함한다.
 
 ## 검증됨
 
@@ -39,17 +48,18 @@
   - Vitest 9개 파일, 51개 테스트 통과
   - TypeScript typecheck 통과
   - Vite production build 통과, 30 modules transformed
-  - Chromium E2E 32개 통과
+  - Chromium E2E 50개 통과
 - Screen E2E: Home 초기 포커스, keyboard 시작/플레이/pause/resume/restart, focus-loss pause, Result 재도전/Home, active-run Back 취소·확인, direct Game/Result URL 정규화
-- viewport E2E: 1440×900, 1024×768, 768×1024, 390×844, 360×640의 Game UI 경계와 가로 overflow 검증
+- viewport E2E: 1440×900, 1024×768, 768×1024, 390×844, 360×640의 Home/Game/Result 경계와 가로 overflow 검증
 - 모바일 E2E: touch controls는 Game에서만 표시, 이동·회전·hard drop·hold, 취소된 hard drop, 작은 viewport pause/복구 검증
 - 접근성 E2E: 활성 Screen만 `inert` 해제, accessible name, dialog focus 순환·복원, reduced motion, forced colors, browser Back dialog close
-- visual E2E 10개: Home desktop/mobile, running desktop/mobile, high-stack desktop/tablet, hold-used, paused, Result desktop/mobile
-- visual 수동 검토: Home은 board/HUD 없이 시작 행동 중심, Game 모바일은 board와 48px touch dock 중심, Result는 board 없이 최종 점수 중심으로 구분됨
+- visual E2E 17개: 기존 Home/running/high-stack/hold-used/paused/Result 10개와 settings, controls, restart confirm, leave confirm, recovery toast, 320×480 viewport notice, fatal error
+- 시각 수동 검토: 17개 최종 이미지를 직접 확인했고 Home은 시작 lane, Game은 board rail, Result는 L자 lockline으로 흑백에서도 역할이 구분되는 구도를 유지한다.
+- 스트레스 E2E: 긴 한국어 설명, 점수·최고 점수 `9,999,999,999`, 라인 `999`, 레벨 `99`에서 mobile 가로 overflow와 결과 그룹 잘림이 없음
 - 성능 각 30초:
-  - desktop 1440×900: 평균 16.66ms, p95 16.7ms, 최대 16.8ms, long task 1, heap delta 0
+  - desktop 1440×900: 평균 16.66ms, p95 16.8ms, 최대 16.8ms, long task 1, heap delta 0
   - mobile 390×844: 평균 16.66ms, p95 16.7ms, 최대 16.8ms, long task 1, heap delta 0
-  - 이전 측정과 frame/long task/heap 수치는 동일하고, persistent Screen DOM 도입으로 DOM node는 202→263 증가
+  - 이전 Screen 기준 대비 desktop p95 증가는 약 0.6%로 허용 기준 10% 이내이고, mobile/long task/heap 수치는 동일하다. DOM node는 263→253으로 감소했다.
 
 ## 미검증 / 출시 전 수동 확인
 
