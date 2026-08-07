@@ -62,3 +62,20 @@ test("provides accessible names and reduced-motion behavior", async ({ page }) =
   expect(durations.transition.split(", ").every((value) => value === "1e-05s")).toBe(true);
   expect(errors).toEqual([]);
 });
+
+test("keeps controls and status readable in forced-colors mode", async ({ page }) => {
+  const errors = collectConsoleErrors(page);
+  await page.emulateMedia({ forcedColors: "active", reducedMotion: "reduce" });
+  await page.goto("/");
+  await expect(page.locator("#game-board")).toBeVisible();
+  const helpButton = page.getByRole("button", { name: "조작 도움말" });
+  await helpButton.focus();
+  await expect(helpButton).toBeFocused();
+  const focusStyle = await helpButton.evaluate((element) => {
+    const styles = getComputedStyle(element);
+    return { style: styles.outlineStyle, width: styles.outlineWidth };
+  });
+  expect(focusStyle.style).not.toBe("none");
+  expect(Number.parseFloat(focusStyle.width)).toBeGreaterThanOrEqual(2);
+  expect(errors).toEqual([]);
+});

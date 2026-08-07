@@ -51,6 +51,47 @@ test("supports keyboard play, pause, resume, and restart", async ({ page }) => {
   expect(errors).toEqual([]);
 });
 
+test("auto-pauses when the browser loses focus", async ({ page }) => {
+  const errors = collectConsoleErrors(page);
+  await page.goto("/");
+  await page.getByRole("button", { name: "게임 시작" }).click();
+  await page.evaluate(() => window.dispatchEvent(new Event("blur")));
+  await expect(page.locator("#game-status")).toHaveText("일시정지");
+  await expect(page.locator("#overlay-description")).toContainText("자동으로 멈췄습니다");
+  expect(errors).toEqual([]);
+});
+
+test("recovers corrupted profile data without blocking play", async ({ page }) => {
+  const errors = collectConsoleErrors(page);
+  await page.addInitScript(() => localStorage.setItem("stackfall:profile:v1", "not-json"));
+  await page.goto("/");
+  await expect(page.locator("#status-toast")).toContainText("기본값으로 복구");
+  await page.getByRole("button", { name: "게임 시작" }).click();
+  await expect(page.locator("#game-status")).toHaveText("진행 중");
+  expect(errors).toEqual([]);
+});
+
+test("shows a recoverable game-over action from a deterministic state", async ({ page }) => {
+  const errors = collectConsoleErrors(page);
+  await page.goto("/?fixture=game-over&freeze=1");
+  await expect(page.locator("#game-status")).toHaveText("게임 오버");
+  await expect(page.getByRole("button", { name: "다시 시작" }).last()).toBeVisible();
+  await page.locator("#primary-action").click();
+  await expect(page.locator("#game-status")).toHaveText("진행 중");
+  await expect(page.locator("#score-value")).toHaveText("0");
+  expect(errors).toEqual([]);
+});
+
+test("blocks gameplay when the viewport cannot fit the minimum board", async ({ page }) => {
+  const errors = collectConsoleErrors(page);
+  await page.setViewportSize({ width: 320, height: 480 });
+  await page.goto("/");
+  await expect(page.getByRole("alertdialog", { name: "화면 공간이 부족합니다" })).toBeVisible();
+  await page.keyboard.press("Enter");
+  await expect(page.locator("#game-status")).toHaveText("준비");
+  expect(errors).toEqual([]);
+});
+
 test("supports touch play through the shared input path", async ({ page }) => {
   const errors = collectConsoleErrors(page);
   await page.setViewportSize({ width: 390, height: 844 });

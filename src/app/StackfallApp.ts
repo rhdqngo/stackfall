@@ -297,9 +297,13 @@ export class StackfallApp {
     if (blocked === this.viewportBlocked) return;
     this.viewportBlocked = blocked;
     this.refs.viewportNotice.hidden = !blocked;
+    for (const child of this.refs.viewportNotice.parentElement?.children ?? []) {
+      if (child instanceof HTMLElement && child !== this.refs.viewportNotice) child.inert = blocked;
+    }
     if (blocked) {
       this.pauseFromInterruption();
       this.input.setContext("modal");
+      this.refs.viewportNotice.focus();
     } else if (this.uiState.modal === "none") {
       this.input.setContext("gameplay");
       if (this.state.status !== "running") this.refs.primaryButton.focus();

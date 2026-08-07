@@ -34,6 +34,7 @@ gitignore 되어 있어 커밋되지 않습니다.
 | E2E 테스트 | `npm run test:e2e` |
 | 시각 기준선 갱신 | `npm run test:visual:update` |
 | 성능 측정 | `npm run measure:performance` |
+| 전체 검증 | `npm run check` |
 | 린트 / 포맷 | `npm run lint` |
 | 타입 체크 | `npm run typecheck` |
 

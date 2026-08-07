@@ -212,7 +212,7 @@ export function createGameShell(root: HTMLElement): GameShellRefs {
           <button id="restart-confirm" class="button button--danger" type="button">다시 시작</button>
         </div>
       </dialog>
-      <div id="viewport-notice" class="viewport-notice" role="alertdialog" aria-modal="true" aria-labelledby="viewport-notice-title" hidden>
+      <div id="viewport-notice" class="viewport-notice" role="alertdialog" aria-modal="true" aria-labelledby="viewport-notice-title" tabindex="-1" hidden>
         <span class="dialog-kicker">VIEWPORT LIMITED</span>
         <strong id="viewport-notice-title">화면 공간이 부족합니다</strong>
         <p>기기를 세로로 돌리거나 브라우저 높이를 늘린 뒤 계속하세요.</p>
