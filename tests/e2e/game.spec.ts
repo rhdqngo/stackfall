@@ -9,24 +9,39 @@ function collectConsoleErrors(page: Page): string[] {
   return errors;
 }
 
-test("loads the board, HUD, controls, and three-piece queue", async ({ page }) => {
+async function enableTouchControls(page: Page): Promise<void> {
+  await page.addInitScript(() => {
+    localStorage.setItem("stackfall:profile:v1", JSON.stringify({
+      version: 1,
+      highScore: 0,
+      preferences: { motion: "reduced", boardContrast: "standard", touchControls: "on" },
+    }));
+  });
+}
+
+test("opens on a focused Home screen without mounting gameplay into the active view", async ({ page }) => {
   const errors = collectConsoleErrors(page);
   await page.goto("/");
 
+  await expect(page.locator("#home-screen")).toBeVisible();
+  await expect(page.locator("#game-screen")).toBeHidden();
+  await expect(page.locator("#result-screen")).toBeHidden();
   await expect(page.getByRole("heading", { name: "STACKFALL" })).toBeVisible();
-  await expect(page.getByRole("button", { name: "게임 시작" })).toBeVisible();
-  await expect(page.getByLabel("10열 20행 Stackfall 게임 보드")).toBeVisible();
-  await expect(page.getByText("점수", { exact: true })).toBeVisible();
-  await expect(page.getByText("조작", { exact: true })).toBeVisible();
-  await expect(page.locator(".next-preview")).toHaveCount(3);
+  await expect(page.getByRole("button", { name: "게임 시작" })).toBeFocused();
+  await expect(page.getByLabel("10열 20행 Stackfall 게임 보드")).toBeHidden();
+  await expect(page.locator("#touch-controls")).toBeHidden();
+  expect(new URL(page.url()).hash).toBe("#/");
   expect(errors).toEqual([]);
 });
 
-test("supports keyboard play, pause, resume, and restart", async ({ page }) => {
+test("supports keyboard start, play, pause, resume, and confirmed restart", async ({ page }) => {
   const errors = collectConsoleErrors(page);
   await page.goto("/");
-  await page.getByRole("button", { name: "게임 시작" }).click();
+  await page.keyboard.press("Enter");
+  await expect(page.locator("#game-screen")).toBeVisible();
   await expect(page.locator("#game-status")).toHaveText("진행 중");
+  await expect(page.locator("#game-board")).toBeFocused();
+  expect(new URL(page.url()).hash).toBe("#/game");
 
   await page.keyboard.press("ArrowLeft");
   await page.keyboard.press("x");
@@ -34,12 +49,15 @@ test("supports keyboard play, pause, resume, and restart", async ({ page }) => {
   await expect.poll(async () => Number(await page.locator("#score-value").textContent())).toBeGreaterThan(0);
 
   await page.keyboard.press("p");
+  await expect(page.locator("#pause-overlay")).toBeVisible();
   await expect(page.locator("#game-status")).toHaveText("일시정지");
+  await expect(page.locator("#game-play-surface")).toHaveAttribute("inert", "");
   const pausedScore = await page.locator("#score-value").textContent();
   await page.waitForTimeout(250);
   await expect(page.locator("#score-value")).toHaveText(pausedScore ?? "0");
 
   await page.keyboard.press("Enter");
+  await expect(page.locator("#pause-overlay")).toBeHidden();
   await expect(page.locator("#game-status")).toHaveText("진행 중");
   await page.keyboard.press("r");
   await expect(page.getByRole("dialog", { name: "현재 게임을 다시 시작할까요?" })).toBeVisible();
@@ -51,17 +69,19 @@ test("supports keyboard play, pause, resume, and restart", async ({ page }) => {
   expect(errors).toEqual([]);
 });
 
-test("auto-pauses when the browser loses focus", async ({ page }) => {
+test("auto-pauses on interruption and never resumes without an explicit action", async ({ page }) => {
   const errors = collectConsoleErrors(page);
   await page.goto("/");
   await page.getByRole("button", { name: "게임 시작" }).click();
   await page.evaluate(() => window.dispatchEvent(new Event("blur")));
   await expect(page.locator("#game-status")).toHaveText("일시정지");
-  await expect(page.locator("#overlay-description")).toContainText("자동으로 멈췄습니다");
+  await expect(page.locator("#pause-description")).toContainText("자동으로 멈췄습니다");
+  await page.waitForTimeout(250);
+  await expect(page.locator("#game-status")).toHaveText("일시정지");
   expect(errors).toEqual([]);
 });
 
-test("recovers corrupted profile data without blocking play", async ({ page }) => {
+test("recovers corrupted profile data on Home without blocking a new run", async ({ page }) => {
   const errors = collectConsoleErrors(page);
   await page.addInitScript(() => localStorage.setItem("stackfall:profile:v1", "not-json"));
   await page.goto("/");
@@ -71,38 +91,47 @@ test("recovers corrupted profile data without blocking play", async ({ page }) =
   expect(errors).toEqual([]);
 });
 
-test("shows a recoverable game-over action from a deterministic state", async ({ page }) => {
+test("renders game over as a Result screen with retry and Home actions", async ({ page }) => {
   const errors = collectConsoleErrors(page);
   await page.goto("/?fixture=game-over&freeze=1");
-  await expect(page.locator("#game-status")).toHaveText("게임 오버");
-  await expect(page.getByRole("button", { name: "다시 시작" }).last()).toBeVisible();
-  await page.locator("#primary-action").click();
+  await expect(page.locator("#result-screen")).toBeVisible();
+  await expect(page.locator("#result-score-value")).toHaveText("12,480");
+  await expect(page.locator("#result-eyebrow")).toContainText("NEW BEST");
+  await expect(page.locator("#game-board")).toBeHidden();
+  await expect(page.locator("#touch-controls")).toBeHidden();
+  await expect(page.getByRole("button", { name: "다시 도전" })).toBeFocused();
+  expect(new URL(page.url()).hash).toBe("#/result");
+
+  await page.keyboard.press("Enter");
+  await expect(page.locator("#game-screen")).toBeVisible();
   await expect(page.locator("#game-status")).toHaveText("진행 중");
   await expect(page.locator("#score-value")).toHaveText("0");
   expect(errors).toEqual([]);
 });
 
-test("blocks gameplay when the viewport cannot fit the minimum board", async ({ page }) => {
+test("keeps Home usable on a tiny viewport and blocks only the attempted run", async ({ page }) => {
   const errors = collectConsoleErrors(page);
   await page.setViewportSize({ width: 320, height: 480 });
   await page.goto("/");
+  await expect(page.locator("#home-screen")).toBeVisible();
+  await expect(page.locator("#viewport-notice")).toBeHidden();
+  await page.getByRole("button", { name: "게임 시작" }).click();
   await expect(page.getByRole("alertdialog", { name: "화면 공간이 부족합니다" })).toBeVisible();
-  await page.keyboard.press("Enter");
-  await expect(page.locator("#game-status")).toHaveText("준비");
+  await expect(page.locator("#game-screen")).toBeHidden();
+  await page.getByRole("button", { name: "확인" }).click();
+  await expect(page.locator("#home-screen")).toBeVisible();
   expect(errors).toEqual([]);
 });
 
-test("supports touch play through the shared input path", async ({ page }) => {
+test("supports touch play only after entering Game", async ({ page }) => {
   const errors = collectConsoleErrors(page);
   await page.setViewportSize({ width: 390, height: 844 });
+  await enableTouchControls(page);
   await page.goto("/");
-
-  await page.getByRole("button", { name: "설정" }).click();
-  await page.getByRole("radio", { name: "항상 표시" }).click();
-  await page.getByRole("button", { name: "설정 닫기" }).click();
+  await expect(page.locator("#touch-controls")).toBeHidden();
+  await page.getByRole("button", { name: "게임 시작" }).click();
   await expect(page.locator("#touch-controls")).toBeVisible();
 
-  await page.getByRole("button", { name: "게임 시작" }).click();
   await page.getByRole("button", { name: "오른쪽으로 이동" }).click();
   await page.getByRole("button", { name: "오른쪽으로 회전" }).click();
   await page.getByRole("button", { name: "하드 드롭" }).click();
@@ -121,33 +150,67 @@ test("supports touch play through the shared input path", async ({ page }) => {
 
   await page.getByRole("button", { name: "홀드" }).click();
   await expect(page.locator(".hold-panel")).toHaveAttribute("data-available", "false");
-  await expect(page.locator("#hold-state")).toHaveText("잠김");
+  expect(errors).toEqual([]);
+});
+
+test("guards browser Back during an active run and preserves the paused run on cancel", async ({ page }) => {
+  const errors = collectConsoleErrors(page);
+  await page.goto("/");
+  await page.getByRole("button", { name: "게임 시작" }).click();
+  await page.keyboard.press("Space");
+  const score = await page.locator("#score-value").textContent();
+
+  await page.goBack();
+  const leaveDialog = page.getByRole("dialog", { name: "현재 게임을 끝내고 홈으로 이동할까요?" });
+  await expect(leaveDialog).toBeVisible();
+  await page.getByRole("button", { name: "게임 계속" }).click();
+  await expect(leaveDialog).toBeHidden();
+  await expect(page.locator("#game-status")).toHaveText("일시정지");
+  await expect(page.locator("#score-value")).toHaveText(score ?? "0");
+
+  await page.goBack();
+  await expect(leaveDialog).toBeVisible();
+  await page.getByRole("button", { name: "홈으로 이동" }).click();
+  await expect(page.locator("#home-screen")).toBeVisible();
+  await expect(page.locator("#game-screen")).toBeHidden();
+  expect(errors).toEqual([]);
+});
+
+test("normalizes direct Game and Result URLs without an in-memory run", async ({ page }) => {
+  const errors = collectConsoleErrors(page);
+  await page.goto("/#/game");
+  await expect(page.locator("#home-screen")).toBeVisible();
+  expect(new URL(page.url()).hash).toBe("#/");
+  await expect(page.locator("#status-toast")).toContainText("저장되지 않아 홈으로 이동");
   expect(errors).toEqual([]);
 });
 
 for (const viewport of [
-  { name: "desktop", width: 1440, height: 900 },
-  { name: "small desktop", width: 1024, height: 768 },
-  { name: "portrait tablet", width: 768, height: 1024 },
-  { name: "mobile", width: 390, height: 844 },
-  { name: "small mobile", width: 360, height: 640 },
+  { name: "desktop", width: 1440, height: 900, touch: false },
+  { name: "small desktop", width: 1024, height: 768, touch: false },
+  { name: "portrait tablet", width: 768, height: 1024, touch: false },
+  { name: "mobile", width: 390, height: 844, touch: true },
+  { name: "small mobile", width: 360, height: 640, touch: true },
 ]) {
-  test(`keeps primary UI inside the ${viewport.name} viewport width`, async ({ page }) => {
+  test(`keeps the active Game UI inside the ${viewport.name} viewport`, async ({ page }) => {
     const errors = collectConsoleErrors(page);
     await page.setViewportSize({ width: viewport.width, height: viewport.height });
-    await page.goto("/");
+    if (viewport.touch) await enableTouchControls(page);
+    await page.goto("/?fixture=running&freeze=1");
+    await expect(page.locator("#game-screen")).toBeVisible();
 
     const overflow = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
     expect(overflow).toBeLessThanOrEqual(0);
 
-    for (const selector of [".masthead", ".board-frame", ".stats-panel", ".preview-panel"]) {
+    const selectors = [".game-header", ".board-frame", ".stats-panel", ".preview-panel"];
+    if (viewport.touch) selectors.push(".touch-controls");
+    for (const selector of selectors) {
       const box = await page.locator(selector).boundingBox();
       expect(box, `${selector} should be rendered`).not.toBeNull();
       expect(box!.x).toBeGreaterThanOrEqual(0);
       expect(box!.x + box!.width).toBeLessThanOrEqual(viewport.width + 1);
+      expect(box!.y + box!.height).toBeLessThanOrEqual(viewport.height + 1);
     }
-    const boardBox = await page.locator(".board-frame").boundingBox();
-    expect(boardBox!.y + boardBox!.height).toBeLessThanOrEqual(viewport.height + 1);
     expect(errors).toEqual([]);
   });
 }

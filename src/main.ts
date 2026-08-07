@@ -1,6 +1,6 @@
 import "./style.css";
 import { StackfallApp } from "./app/StackfallApp";
-import { createGameShell, showFatalError } from "./ui/gameShell";
+import { createAppShell, showFatalError } from "./ui/appShell";
 
 const root = document.querySelector<HTMLElement>("#app");
 
@@ -9,7 +9,7 @@ if (!root) {
 }
 
 try {
-  const shell = createGameShell(root);
+  const shell = createAppShell(root);
   new StackfallApp(shell).start();
 } catch (error) {
   console.error(error);

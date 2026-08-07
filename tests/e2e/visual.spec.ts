@@ -8,15 +8,16 @@ interface VisualCase {
 }
 
 const cases: VisualCase[] = [
-  { name: "ready-desktop", fixture: "ready", viewport: { width: 1440, height: 900 } },
+  { name: "home-desktop", fixture: "ready", viewport: { width: 1440, height: 900 } },
   { name: "running-desktop", fixture: "running", viewport: { width: 1440, height: 900 } },
   { name: "high-stack-desktop", fixture: "high-stack", viewport: { width: 1440, height: 900 } },
   { name: "hold-used-desktop", fixture: "hold-used", viewport: { width: 1440, height: 900 } },
   { name: "paused-small-desktop", fixture: "paused", viewport: { width: 1024, height: 768 } },
   { name: "high-stack-tablet", fixture: "high-stack", viewport: { width: 768, height: 1024 } },
-  { name: "game-over-desktop", fixture: "game-over", viewport: { width: 1440, height: 900 } },
-  { name: "ready-small-mobile", fixture: "ready", viewport: { width: 360, height: 640 }, touch: true },
+  { name: "result-desktop", fixture: "game-over", viewport: { width: 1440, height: 900 } },
+  { name: "home-small-mobile", fixture: "ready", viewport: { width: 360, height: 640 }, touch: true },
   { name: "running-mobile", fixture: "running", viewport: { width: 390, height: 844 }, touch: true },
+  { name: "result-mobile", fixture: "game-over", viewport: { width: 390, height: 844 }, touch: true },
 ];
 
 async function configureTouch(page: Page): Promise<void> {
@@ -35,7 +36,7 @@ for (const visualCase of cases) {
     if (visualCase.touch) await configureTouch(page);
     await page.emulateMedia({ reducedMotion: "reduce" });
     await page.goto(`/?fixture=${visualCase.fixture}&freeze=1`);
-    await expect(page.locator(".app-shell")).toBeVisible();
+    await expect(page.locator(`[data-screen="${visualCase.fixture === "ready" ? "home" : visualCase.fixture === "game-over" ? "result" : "game"}"]`)).toBeVisible();
     await expect(page).toHaveScreenshot(`${visualCase.name}.png`, {
       animations: "disabled",
       caret: "hide",

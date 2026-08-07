@@ -1,11 +1,13 @@
 import type { UiPreferences } from "../app/uiState";
-import type { GameShellRefs } from "./gameShell";
+import type { DialogRefs } from "./appShell";
 
 interface DialogCallbacks {
+  onClose: (kind: "settings" | "controls") => void;
   onRestartConfirm: () => void;
   onRestartCancel: () => void;
+  onLeaveRunConfirm: () => void;
+  onLeaveRunCancel: () => void;
   onPreferencesChange: (preferences: UiPreferences) => void;
-  onDialogClose: () => void;
 }
 
 function setRadioValue(dialog: HTMLDialogElement, name: string, value: string): void {
@@ -52,28 +54,24 @@ export class DialogController {
   private readonly settingsForm: HTMLFormElement;
 
   constructor(
-    private readonly refs: GameShellRefs,
-    private readonly callbacks: DialogCallbacks,
+    private readonly refs: DialogRefs,
+    callbacks: DialogCallbacks,
   ) {
     this.settingsForm = refs.settingsDialog.querySelector<HTMLFormElement>("form")!;
-    refs.settingsClose.addEventListener("click", () => this.closeSettings());
-    refs.controlsClose.addEventListener("click", () => this.closeControls());
-    refs.restartCancel.addEventListener("click", () => {
-      refs.restartDialog.close();
-      callbacks.onRestartCancel();
-    });
-    refs.restartConfirm.addEventListener("click", () => {
-      refs.restartDialog.close();
-      callbacks.onRestartConfirm();
-    });
+    refs.settingsClose.addEventListener("click", () => callbacks.onClose("settings"));
+    refs.controlsClose.addEventListener("click", () => callbacks.onClose("controls"));
+    refs.restartCancel.addEventListener("click", callbacks.onRestartCancel);
+    refs.restartConfirm.addEventListener("click", callbacks.onRestartConfirm);
+    refs.leaveRunCancel.addEventListener("click", callbacks.onLeaveRunCancel);
+    refs.leaveRunConfirm.addEventListener("click", callbacks.onLeaveRunConfirm);
     this.settingsForm.addEventListener("change", () => callbacks.onPreferencesChange(this.readPreferences()));
-    for (const dialog of [refs.settingsDialog, refs.controlsDialog, refs.restartDialog]) {
+    for (const dialog of [refs.settingsDialog, refs.controlsDialog, refs.restartDialog, refs.leaveRunDialog]) {
       dialog.addEventListener("keydown", (event) => trapFocus(dialog, event));
       dialog.addEventListener("cancel", (event) => {
         event.preventDefault();
-        dialog.close();
         if (dialog === refs.restartDialog) callbacks.onRestartCancel();
-        else callbacks.onDialogClose();
+        else if (dialog === refs.leaveRunDialog) callbacks.onLeaveRunCancel();
+        else callbacks.onClose(dialog === refs.settingsDialog ? "settings" : "controls");
       });
     }
   }
@@ -96,14 +94,20 @@ export class DialogController {
     this.refs.restartCancel.focus();
   }
 
-  private closeSettings(): void {
-    this.refs.settingsDialog.close();
-    this.callbacks.onDialogClose();
+  openLeaveRunConfirm(): void {
+    if (!this.refs.leaveRunDialog.open) this.refs.leaveRunDialog.showModal();
+    this.refs.leaveRunCancel.focus();
   }
 
-  private closeControls(): void {
-    this.refs.controlsDialog.close();
-    this.callbacks.onDialogClose();
+  close(kind: "settings" | "controls" | "restartConfirm" | "leaveRunConfirm"): void {
+    const dialog = kind === "settings"
+      ? this.refs.settingsDialog
+      : kind === "controls"
+        ? this.refs.controlsDialog
+        : kind === "restartConfirm"
+          ? this.refs.restartDialog
+          : this.refs.leaveRunDialog;
+    if (dialog.open) dialog.close();
   }
 
   private readPreferences(): UiPreferences {

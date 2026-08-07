@@ -17,13 +17,21 @@ const BINDINGS: Record<string, TouchBinding> = {
 
 export class TouchControls {
   private readonly hardDropPointers = new Set<number>();
+  private readonly buttons: HTMLButtonElement[];
 
   constructor(element: HTMLElement, private readonly input: InputController) {
-    for (const button of element.querySelectorAll<HTMLButtonElement>("[data-touch-action]")) {
+    this.buttons = Array.from(element.querySelectorAll<HTMLButtonElement>("[data-touch-action]"));
+    for (const button of this.buttons) {
       const action = button.dataset.touchAction;
       if (action === "hardDrop") this.bindHardDrop(button);
       else if (action && BINDINGS[action]) this.bindCommand(button, BINDINGS[action]);
     }
+  }
+
+  reset(): void {
+    this.hardDropPointers.clear();
+    this.buttons.forEach((button) => button.classList.remove("is-pressed"));
+    this.input.clear();
   }
 
   private bindCommand(button: HTMLButtonElement, binding: TouchBinding): void {

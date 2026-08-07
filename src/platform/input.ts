@@ -4,7 +4,7 @@ import { RepeatController, type RepeatProfile } from "./repeatController";
 export const DAS_MS = 150;
 export const ARR_MS = 50;
 
-export type InputContext = "gameplay" | "modal";
+export type InputContext = "gameplay" | "modal" | "inactive";
 
 interface CommandBinding {
   command: InputCommand;

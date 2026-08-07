@@ -2,7 +2,7 @@ import type { GameState } from "../game/types";
 import type { CanvasTheme } from "../render/canvasTheme";
 import { renderPreview } from "../render/canvasRenderer";
 import { STATUS_LABELS } from "./copy";
-import type { GameShellRefs } from "./gameShell";
+import type { GameScreenRefs } from "./screens/gameScreen";
 
 const numberFormat = new Intl.NumberFormat("ko-KR");
 
@@ -10,7 +10,7 @@ export class GameHud {
   private renderedState: GameState | null = null;
   private renderedHighScore = -1;
 
-  constructor(private readonly refs: GameShellRefs) {}
+  constructor(private readonly refs: GameScreenRefs) {}
 
   render(state: GameState, highScore: number, theme: CanvasTheme, force = false): void {
     const previous = this.renderedState;
