@@ -7,6 +7,7 @@ import { readCanvasTheme, type CanvasTheme } from "../render/canvasTheme";
 import { StatusAnnouncer } from "../ui/announcer";
 import { getOverlayCopy } from "../ui/copy";
 import { DialogController } from "../ui/dialogs";
+import { deriveFeedback, FeedbackController } from "../ui/feedback";
 import type { GameShellRefs } from "../ui/gameShell";
 import { GameHud } from "../ui/hud";
 import { TouchControls } from "../ui/touchControls";
@@ -33,11 +34,13 @@ export class StackfallApp {
   private readonly hud: GameHud;
   private readonly announcer: StatusAnnouncer;
   private readonly dialogs: DialogController;
+  private readonly feedback: FeedbackController;
   private readonly storage = getBrowserStorage();
   private readonly uiState: UiState;
   private theme: CanvasTheme;
   private renderedBoard: Pick<GameState, "board" | "active"> | null = null;
   private renderedStatus: GameState["status"] | null = null;
+  private renderedOverlayKey = "";
   private lastFrame = performance.now();
   private accumulator = 0;
   private toastTimeout: number | null = null;
@@ -63,6 +66,7 @@ export class StackfallApp {
     this.theme = readCanvasTheme();
     this.hud = new GameHud(refs);
     this.announcer = new StatusAnnouncer(refs.announcer);
+    this.feedback = new FeedbackController(refs.boardFrame, refs.holdPanel, refs.feedbackChip);
     this.dialogs = new DialogController(refs, {
       onRestartConfirm: () => this.confirmRestart(),
       onRestartCancel: () => this.finishDialog(),
@@ -126,7 +130,7 @@ export class StackfallApp {
       return;
     }
 
-    this.setState(applyCommand(this.state, command));
+    this.setState(applyCommand(this.state, command), command);
     if (command.type === "start") {
       this.uiState.pauseReason = null;
       this.refs.boardCanvas.focus();
@@ -134,22 +138,28 @@ export class StackfallApp {
     this.render();
   }
 
-  private setState(next: GameState): void {
+  private setState(next: GameState, command?: InputCommand): void {
     const previous = this.state;
+    this.feedback.play(deriveFeedback(previous, next, command));
     if (next === previous) return;
+    const previousHighScore = this.uiState.highScore;
     this.state = next;
 
     if (next.score > this.uiState.highScore) this.uiState.highScore = next.score;
+    const announcements: string[] = [];
     if (next.lines > previous.lines) {
       const cleared = next.lines - previous.lines;
-      this.announcer.announce(`${cleared}줄 제거, 점수 ${next.score}점`);
+      announcements.push(`${cleared}줄 제거, 점수 ${next.score}점`);
     }
-    if (next.level > previous.level) this.announcer.announce(`레벨 ${next.level}`);
+    if (next.level > previous.level) announcements.push(`레벨 ${next.level}`);
+    if (previous.status === "paused" && next.status === "running") announcements.push("게임 재개");
+    if (previous.status === "running" && next.status === "paused") announcements.push("게임 일시정지");
     if (previous.status !== "gameOver" && next.status === "gameOver") {
-      this.newBest = next.score > 0 && next.score >= this.uiState.highScore;
-      this.announcer.announce(`게임 오버, 최종 점수 ${next.score}점`);
+      this.newBest = next.score > previousHighScore;
+      announcements.push(`게임 오버, 최종 점수 ${next.score}점`);
       this.persistProfile();
     }
+    if (announcements.length > 0) this.announcer.announce(announcements.join(". "));
   }
 
   private handlePrimaryAction(): void {
@@ -310,18 +320,22 @@ export class StackfallApp {
     this.hud.render(this.state, Math.max(this.uiState.highScore, this.state.score), this.theme, force);
     const copy = getOverlayCopy(this.state.status, this.state.score, this.uiState.pauseReason);
     const isRunning = copy === null;
-    this.refs.overlay.hidden = isRunning;
-    this.refs.pauseButton.disabled = this.state.status === "ready" || this.state.status === "gameOver";
-    this.refs.pauseButton.classList.toggle("is-active", this.state.status === "paused");
-    this.refs.pauseButton.querySelector("span")!.textContent = this.state.status === "paused" ? "계속하기" : "일시정지";
+    const overlayKey = `${this.state.status}:${this.uiState.pauseReason}:${this.newBest}`;
+    if (force || overlayKey !== this.renderedOverlayKey) {
+      this.refs.overlay.hidden = isRunning;
+      this.refs.pauseButton.disabled = this.state.status === "ready" || this.state.status === "gameOver";
+      this.refs.pauseButton.classList.toggle("is-active", this.state.status === "paused");
+      this.refs.pauseButton.querySelector("span")!.textContent = this.state.status === "paused" ? "계속하기" : "일시정지";
 
-    if (copy) {
-      this.refs.overlayEyebrow.textContent = this.newBest && this.state.status === "gameOver" ? "NEW BEST" : copy.eyebrow;
-      this.refs.overlayTitle.textContent = copy.title;
-      this.refs.overlayDescription.textContent = this.newBest && this.state.status === "gameOver"
-        ? `${copy.description} · 새로운 최고 기록`
-        : copy.description;
-      this.refs.primaryButton.textContent = copy.action;
+      if (copy) {
+        this.refs.overlayEyebrow.textContent = this.newBest && this.state.status === "gameOver" ? "NEW BEST" : copy.eyebrow;
+        this.refs.overlayTitle.textContent = copy.title;
+        this.refs.overlayDescription.textContent = this.newBest && this.state.status === "gameOver"
+          ? `${copy.description} · 새로운 최고 기록`
+          : copy.description;
+        this.refs.primaryButton.textContent = copy.action;
+      }
+      this.renderedOverlayKey = overlayKey;
     }
 
     if (this.renderedStatus !== this.state.status && !isRunning && this.uiState.modal === "none") {

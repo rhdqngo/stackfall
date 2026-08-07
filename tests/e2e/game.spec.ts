@@ -67,6 +67,17 @@ test("supports touch play through the shared input path", async ({ page }) => {
   await page.getByRole("button", { name: "하드 드롭" }).click();
   await expect.poll(async () => Number(await page.locator("#score-value").textContent())).toBeGreaterThan(0);
 
+  const hardDrop = page.getByRole("button", { name: "하드 드롭" });
+  const hardDropBox = await hardDrop.boundingBox();
+  const scoreBeforeCancelledDrop = await page.locator("#score-value").textContent();
+  expect(hardDropBox).not.toBeNull();
+  await page.mouse.move(hardDropBox!.x + hardDropBox!.width / 2, hardDropBox!.y + hardDropBox!.height / 2);
+  await page.mouse.down();
+  await page.mouse.move(hardDropBox!.x - 16, hardDropBox!.y - 16);
+  await page.mouse.up();
+  await expect(page.locator("#score-value")).toHaveText(scoreBeforeCancelledDrop ?? "0");
+  await expect(hardDrop).not.toHaveClass(/is-pressed/);
+
   await page.getByRole("button", { name: "홀드" }).click();
   await expect(page.locator(".hold-panel")).toHaveAttribute("data-available", "false");
   await expect(page.locator("#hold-state")).toHaveText("잠김");

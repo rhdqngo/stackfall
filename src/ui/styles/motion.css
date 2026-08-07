@@ -11,9 +11,59 @@
   animation: overlay-in var(--motion-overlay) var(--ease-enter);
 }
 
+.board-frame.is-feedback-rotate {
+  animation: feedback-rotate 70ms var(--ease-enter);
+}
+
+.board-frame.is-feedback-error,
+.hold-panel.is-feedback-error {
+  animation: feedback-error 80ms var(--ease-exit);
+}
+
+.board-frame.is-feedback-lock {
+  animation: feedback-lock 90ms var(--ease-exit);
+}
+
+.board-frame.is-feedback-line {
+  animation: feedback-line var(--motion-celebration) var(--ease-enter);
+}
+
+.hold-panel.is-feedback-success {
+  animation: feedback-success 120ms var(--ease-enter);
+}
+
+.feedback-chip.is-visible {
+  animation: feedback-chip var(--motion-celebration) var(--ease-enter);
+}
+
 @keyframes overlay-in {
   from { opacity: 0; }
   to { opacity: 1; }
+}
+
+@keyframes feedback-rotate {
+  50% { border-color: var(--active-stroke); }
+}
+
+@keyframes feedback-error {
+  50% { border-color: var(--danger); }
+}
+
+@keyframes feedback-lock {
+  50% { border-bottom-color: var(--accent); }
+}
+
+@keyframes feedback-line {
+  50% { border-left-color: var(--accent); border-right-color: var(--accent); }
+}
+
+@keyframes feedback-success {
+  50% { border-top-color: var(--success); }
+}
+
+@keyframes feedback-chip {
+  from { opacity: 0; transform: translateY(3px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 @media (prefers-reduced-motion: reduce) {

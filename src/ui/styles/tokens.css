@@ -44,6 +44,7 @@
   --motion-press: 70ms;
   --motion-interaction: 120ms;
   --motion-overlay: 160ms;
+  --motion-celebration: 220ms;
   --ease-enter: cubic-bezier(0.2, 0.8, 0.2, 1);
   --ease-exit: cubic-bezier(0.4, 0, 1, 1);
   --board-cell: clamp(24px, min(calc((100vw - 440px) / 10), calc((100dvh - 180px) / 20)), 34px);

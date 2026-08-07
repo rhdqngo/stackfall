@@ -30,6 +30,8 @@ export interface GameShellRefs {
   holdPanel: HTMLElement;
   holdState: HTMLElement;
   holdEmpty: HTMLElement;
+  boardFrame: HTMLElement;
+  feedbackChip: HTMLElement;
   overlay: HTMLElement;
   overlayEyebrow: HTMLElement;
   overlayTitle: HTMLElement;
@@ -102,14 +104,14 @@ export function createGameShell(root: HTMLElement): GameShellRefs {
 
         <section class="board-section" aria-label="게임 보드">
           <div class="fallline" aria-hidden="true"><span>DROP AXIS</span></div>
-          <div class="board-frame">
+          <div id="board-frame" class="board-frame">
             <canvas
               id="game-board"
               tabindex="0"
               aria-label="10열 20행 Stackfall 게임 보드"
               aria-describedby="controls-help"
             ></canvas>
-            <div id="game-overlay" class="game-overlay" role="dialog" aria-modal="true" aria-labelledby="overlay-title" aria-describedby="overlay-description">
+            <div id="game-overlay" class="game-overlay" role="region" aria-labelledby="overlay-title" aria-describedby="overlay-description">
               <div class="overlay-copy">
                 <span id="overlay-eyebrow" class="overlay-eyebrow">READY / 01</span>
                 <strong id="overlay-title">낙하 준비</strong>
@@ -122,6 +124,7 @@ export function createGameShell(root: HTMLElement): GameShellRefs {
           <div class="status-rail">
             <span class="status-label">현재 상태</span>
             <strong id="game-status" data-status="ready">준비</strong>
+            <span id="feedback-chip" class="feedback-chip" aria-hidden="true" hidden></span>
           </div>
         </section>
 
@@ -232,6 +235,8 @@ export function createGameShell(root: HTMLElement): GameShellRefs {
     holdPanel: requireElement(root, "#hold-panel"),
     holdState: requireElement(root, "#hold-state"),
     holdEmpty: requireElement(root, "#hold-empty"),
+    boardFrame: requireElement(root, "#board-frame"),
+    feedbackChip: requireElement(root, "#feedback-chip"),
     overlay: requireElement(root, "#game-overlay"),
     overlayEyebrow: requireElement(root, "#overlay-eyebrow"),
     overlayTitle: requireElement(root, "#overlay-title"),
