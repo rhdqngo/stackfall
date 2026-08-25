@@ -16,7 +16,7 @@ body {
   overflow-x: clip;
   background: var(--color-bg);
   color: var(--text-primary);
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans KR", sans-serif;
+  font-family: var(--font-body);
   font-synthesis: none;
   text-rendering: optimizeLegibility;
 }
@@ -52,13 +52,9 @@ button:focus-visible,
   border: 0;
 }
 
-.panel-state,
 .panel-hint,
-.empty-preview,
-.status-rail,
-.queue-index,
-.overlay-eyebrow {
-  font-family: ui-monospace, "Cascadia Mono", "Noto Sans Mono CJK KR", monospace;
+.empty-preview {
+  font-family: var(--font-data);
 }
 
 kbd {
@@ -73,7 +69,7 @@ kbd {
   border-radius: 2px;
   background: var(--surface-raised);
   color: var(--text-primary);
-  font-family: ui-monospace, "Cascadia Mono", monospace;
+  font-family: var(--font-data);
   font-size: 0.66rem;
 }
 

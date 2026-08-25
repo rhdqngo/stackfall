@@ -32,8 +32,7 @@ export function createHomeScreen(): HomeScreenRefs {
       </nav>
     </header>
     <main class="home-stage">
-      <div class="attract-cabinet" aria-hidden="true">
-        <div class="feed-gate feed-gate--attract"><span></span></div>
+      <div class="attract-preview" aria-hidden="true">
         <div class="attract-well">
           <div class="attract-piece attract-piece--falling">
             <i></i><i></i><i></i><i></i>
@@ -42,18 +41,18 @@ export function createHomeScreen(): HomeScreenRefs {
             <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
           </div>
         </div>
-        <div class="cabinet-status"><span>대기 중</span><i></i></div>
       </div>
       <div class="home-intro">
-        <h2>빈틈을 읽고<br>흐름을 지키세요.</h2>
-        <p>조각을 맞추고 다음 수를 준비하세요.</p>
+        <p>블록을 쌓아 가로줄을 완성하세요.</p>
         <button id="home-start-action" class="button button--primary home-start" type="button">게임 시작</button>
-        <p id="home-input-hint" class="home-input-hint"><kbd>Enter</kbd> 키로 바로 시작</p>
+        <div class="home-meta">
+          <aside class="home-best" aria-label="최고 점수">
+            <span>최고 점수</span>
+            <strong id="home-best-value">0</strong>
+          </aside>
+          <p id="home-input-hint" class="home-input-hint"><kbd>Enter</kbd> 키로 시작</p>
+        </div>
       </div>
-      <aside class="home-best" aria-label="최고 점수">
-        <span>최고 점수</span>
-        <strong id="home-best-value">0</strong>
-      </aside>
     </main>
   `;
 

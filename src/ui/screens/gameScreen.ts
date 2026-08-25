@@ -64,7 +64,7 @@ export function createGameScreen(): GameScreenRefs {
 
       <main class="game-layout" aria-label="Stackfall 게임">
         <section id="hold-panel" class="hud-card preview-panel hold-panel" aria-labelledby="hold-title">
-          <div class="panel-heading"><h2 id="hold-title">홀드</h2><span id="hold-state" class="panel-state">사용 가능</span></div>
+          <div class="panel-heading"><h2 id="hold-title">홀드</h2><span id="hold-state" class="sr-only">사용 가능</span></div>
           <div class="preview-frame">
             <canvas id="hold-preview" aria-label="홀드 블록 미리보기"></canvas>
             <p id="hold-empty" class="empty-preview">비어 있음</p>
@@ -78,18 +78,17 @@ export function createGameScreen(): GameScreenRefs {
             <canvas id="game-board" tabindex="0" aria-label="10열 20행 Stackfall 게임 보드" aria-describedby="game-instructions"></canvas>
           </div>
           <div class="status-rail">
-            <span class="status-label">현재 상태</span>
             <strong id="game-status" data-status="running">진행 중</strong>
             <span id="feedback-chip" class="feedback-chip" aria-hidden="true" hidden></span>
           </div>
         </section>
 
         <section class="hud-card next-panel" aria-labelledby="next-title">
-          <div class="panel-heading"><h2 id="next-title">다음</h2><span class="panel-state">3개</span></div>
+          <div class="panel-heading"><h2 id="next-title">다음</h2></div>
           <ol class="next-list">
-            <li class="next-item next-item--primary"><span class="queue-index">1</span><canvas class="next-preview" aria-label="다음 블록 1"></canvas></li>
-            <li class="next-item"><span class="queue-index">2</span><canvas class="next-preview" aria-label="다음 블록 2"></canvas></li>
-            <li class="next-item"><span class="queue-index">3</span><canvas class="next-preview" aria-label="다음 블록 3"></canvas></li>
+            <li class="next-item next-item--primary"><canvas class="next-preview" aria-label="다음 블록 1"></canvas></li>
+            <li class="next-item"><canvas class="next-preview" aria-label="다음 블록 2"></canvas></li>
+            <li class="next-item"><canvas class="next-preview" aria-label="다음 블록 3"></canvas></li>
           </ol>
         </section>
       </main>
@@ -112,7 +111,7 @@ export function createGameScreen(): GameScreenRefs {
 
     <div id="pause-overlay" class="pause-overlay" role="dialog" aria-modal="true" aria-labelledby="pause-title" aria-describedby="pause-description" hidden>
       <div class="pause-panel">
-        <span id="pause-eyebrow" class="overlay-eyebrow">사용자 일시정지</span>
+        <span id="pause-eyebrow" class="sr-only">사용자 일시정지</span>
         <h2 id="pause-title">일시정지</h2>
         <p id="pause-description">준비되면 같은 흐름으로 돌아갑니다.</p>
         <button id="pause-continue-action" class="button button--primary" type="button">계속하기</button>

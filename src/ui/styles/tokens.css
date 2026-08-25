@@ -1,8 +1,8 @@
 :root {
   color-scheme: dark;
-  --color-bg: #0c1317;
-  --color-well: #04080b;
-  --surface-1: #172127;
+  --color-bg: #0b1216;
+  --color-well: #03070a;
+  --surface-1: #18242a;
   --surface-2: #26353d;
   --surface-raised: #31424a;
   --text-primary: #f0ede3;
@@ -23,6 +23,9 @@
   --piece-s: #61c985;
   --piece-t: #b57ade;
   --piece-z: #e6686e;
+  --font-display: "Bahnschrift Condensed", "Arial Narrow", "Noto Sans KR", system-ui, sans-serif;
+  --font-body: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans KR", sans-serif;
+  --font-data: ui-monospace, "Cascadia Mono", "Noto Sans Mono CJK KR", monospace;
   --board-grid: rgba(155, 168, 173, 0.09);
   --danger-wash: rgba(229, 107, 111, 0.045);
   --danger-line: rgba(229, 107, 111, 0.34);

@@ -30,15 +30,16 @@ export function createResultScreen(): ResultScreenRefs {
       <span class="result-brand">STACKFALL</span>
     </header>
     <main class="result-stage">
-      <div class="result-cabinet">
-        <div class="feed-gate feed-gate--locked" aria-hidden="true"><span></span></div>
-        <div class="result-summary">
+      <div class="result-summary">
+        <div class="result-heading">
           <p id="result-eyebrow" class="result-outcome">플레이 종료</p>
           <h1 id="result-title">게임 결과</h1>
-          <div class="result-score">
-            <span>최종 점수</span>
-            <strong id="result-score-value">0</strong>
-          </div>
+        </div>
+        <div class="result-score">
+          <span>최종 점수</span>
+          <strong id="result-score-value">0</strong>
+        </div>
+        <div class="result-details">
           <dl class="result-stats">
             <div><dt>라인</dt><dd id="result-lines-value">0</dd></div>
             <div><dt>레벨</dt><dd id="result-level-value">1</dd></div>

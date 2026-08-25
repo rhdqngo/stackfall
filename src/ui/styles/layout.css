@@ -24,10 +24,10 @@
 .game-header,
 .result-header {
   display: grid;
-  min-height: 64px;
-  align-items: end;
-  gap: var(--space-5);
-  padding-bottom: 12px;
+  min-height: 56px;
+  align-items: center;
+  gap: var(--space-4);
+  padding-bottom: 10px;
   border-bottom: 0;
 }
 
@@ -37,18 +37,17 @@
 }
 
 .game-header {
-  min-height: 58px;
+  min-height: 54px;
   grid-template-columns: auto minmax(320px, 1fr) auto;
   align-items: center;
-  margin-bottom: 0;
-  padding: 7px 10px;
+  margin-bottom: 18px;
+  padding: 6px 8px;
   border: 1px solid var(--border-strong);
-  border-bottom: 0;
   background: var(--surface-1);
 }
 
 .result-header {
-  min-height: 58px;
+  min-height: 56px;
   grid-template-columns: 1fr;
   align-items: center;
   border-bottom: 0;
@@ -56,26 +55,15 @@
 
 .home-stage {
   display: grid;
-  width: min(100%, 760px);
-  min-height: calc(100dvh - 128px);
-  grid-template-columns: minmax(220px, 0.82fr) minmax(280px, 1.18fr);
-  grid-template-areas:
-    "attract intro"
-    "attract best";
-  grid-template-rows: 1fr auto;
-  align-content: center;
-  gap: var(--space-4) clamp(28px, 5vw, 52px);
-  margin: 0 auto;
-  padding: clamp(28px, 5vh, 44px);
-  border: 1px solid var(--border-strong);
-  border-radius: var(--radius-surface);
-  background: var(--surface-1);
-  box-shadow:
-    inset 0 1px var(--cabinet-highlight),
-    6px 6px 0 var(--cabinet-shadow);
+  width: min(100%, 880px);
+  grid-template-columns: minmax(260px, 0.9fr) minmax(300px, 1.1fr);
+  grid-template-areas: "attract intro";
+  align-items: center;
+  gap: clamp(40px, 7vw, 88px);
+  margin: clamp(56px, 11vh, 96px) auto 40px;
 }
 
-.attract-cabinet {
+.attract-preview {
   grid-area: attract;
 }
 
@@ -83,17 +71,10 @@
   grid-area: intro;
 }
 
-.home-best {
-  grid-area: best;
-}
-
 .result-stage {
-  display: grid;
-  width: min(100%, 590px);
-  min-height: calc(100dvh - 104px);
-  align-content: center;
+  width: min(100%, 760px);
   margin: 0 auto;
-  padding: clamp(32px, 6vh, 56px) var(--space-4);
+  padding: clamp(64px, 11vh, 96px) 0 40px;
 }
 
 .game-layout {
@@ -102,13 +83,8 @@
   grid-template-areas: "hold board next";
   justify-content: center;
   align-items: start;
-  gap: clamp(12px, 1.5vw, 18px);
-  padding: 14px;
-  border: 1px solid var(--border-strong);
-  background: var(--surface-1);
-  box-shadow:
-    inset 0 1px var(--cabinet-highlight),
-    5px 5px 0 var(--cabinet-shadow);
+  gap: clamp(10px, 1.3vw, 14px);
+  padding: 0;
 }
 
 .hold-panel { grid-area: hold; }
@@ -118,7 +94,7 @@
 .board-section {
   position: relative;
   min-width: 0;
-  padding-top: 12px;
+  padding-top: 10px;
 }
 
 .board-frame {
@@ -207,26 +183,19 @@ html[data-touch-controls="on"] {
 
   .home-stage {
     width: 100%;
-    min-height: calc(100dvh - 72px);
     grid-template-columns: minmax(0, 1fr);
     grid-template-areas:
       "attract"
-      "intro"
-      "best";
-    grid-template-rows: auto auto auto;
-    gap: var(--space-3);
-    align-content: center;
-    padding: clamp(12px, 2.5vh, 22px) 0 8px;
-    border-right: 0;
-    border-left: 0;
-    box-shadow: inset 0 1px var(--cabinet-highlight);
+      "intro";
+    grid-template-rows: auto auto;
+    gap: clamp(18px, 4vh, 28px);
+    margin: clamp(22px, 4vh, 32px) auto 12px;
+    padding: 0;
   }
 
   .result-stage {
     width: 100%;
-    min-height: auto;
-    align-content: start;
-    padding: clamp(24px, 5vh, 40px) 0 var(--space-5);
+    padding: clamp(30px, 6vh, 48px) 0 var(--space-5);
   }
 
   .game-layout {

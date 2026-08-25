@@ -1,5 +1,25 @@
 # 인수인계
 
+## 2026-08-25 절제된 아케이드 UI 정리
+
+Stackfall의 Drop Cabinet 정체성은 유지하면서 반복 장식, 과장된 홈 카피, 중첩 카드와 구조적 빈 공간을 정리했다.
+
+- Home은 외곽 캐비닛과 장식 Feed Gate/상태계를 제거하고 attract well, 한 줄 설명, 시작 행동과 최고 점수만 남겼다.
+- Game은 큰 외곽 캐비닛 판을 제거하고 Hold/Next를 필요한 크기로 축소했다. 실제 보드의 Feed Gate와 하단 상태 스트립만 고유 장치로 유지했다.
+- Hold 상태는 보조기술에 남기고 Next 큐 번호와 `3개`, `현재 상태` 중복 레이블은 제거했다.
+- Result는 중앙 카드와 잠긴 Feed Gate를 없애고 데스크톱에서 점수와 기록/행동을 나란히, 모바일에서 세로로 배치했다.
+- Pause의 보이는 eyebrow와 장식 잠금 바를 제거하고 상태 설명을 짧게 다듬었다.
+- Void `#0B1216`, Well `#03070A`, Cabinet `#18242A`, Raised `#26353D`, Chalk `#F0EDE3`, Load Amber `#F0A62E`로 토큰을 정리했다.
+- Bahnschrift Condensed는 워드마크와 결과 점수에만, monospace는 키와 수치에만 사용한다. 패키지와 외부 자산은 추가하지 않았다.
+- 시각 기준선은 변경된 Home/Game/Result/Pause 및 관련 화면에 맞춰 갱신했다.
+
+검증:
+
+- `npm run check`: ESLint 경고 0, Vitest 9개 파일/51개 테스트, TypeScript, production build, Chromium E2E 50개 통과
+- 1440×900, 1024×768, 768×1024, 390×844, 360×640 화면 경계·overflow 검증 통과
+- visual fixture 17개를 갱신하고 Home/Game/Result/Pause의 desktop/mobile 이미지를 직접 재검토했다.
+- 게임 규칙, Canvas renderer, 입력 타이밍, 저장 형식과 라우팅은 변경하지 않았다.
+
 ## 2026-08-25 GitHub 공개 저장소와 Pages 배포
 
 Stackfall을 MIT 라이선스의 공개 GitHub 저장소로 만들고 GitHub Pages에 배포했다.
