@@ -1,9 +1,0 @@
-# 이 스킬은 AGENTS.md 를 수정하므로
-# 사용자가 $init-agents-md 로 직접 부를 때만 실행되어야 합니다.
-
-interface:
-  display_name: Init AGENTS.md
-  short_description: 스택을 탐지해 AGENTS.md 의 프로젝트/명령어 섹션을 채웁니다.
-
-policy:
-  allow_implicit_invocation: false

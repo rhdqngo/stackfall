@@ -1,9 +1,0 @@
-# 이 스킬은 docs/notes/handoff.md 를 덮어쓰므로
-# 사용자가 $handoff 로 직접 부를 때만 실행되어야 합니다.
-
-interface:
-  display_name: Handoff
-  short_description: 작업 상태를 docs/notes/handoff.md 에 기록해 다음 세션이 이어받게 합니다.
-
-policy:
-  allow_implicit_invocation: false

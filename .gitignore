@@ -1,6 +1,9 @@
-# 개인 설정 (머신 로컬)
-# AGENTS.override.md 는 있으면 AGENTS.md 대신 읽힙니다. 커밋하면 팀 설정을 덮어버립니다.
+# 로컬 에이전트 작업 파일
+.agents/
+.codex/
+AGENTS.md
 AGENTS.override.md
+docs/notes/
 
 # 비밀
 .env

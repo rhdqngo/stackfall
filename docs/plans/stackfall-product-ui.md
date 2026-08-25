@@ -21,7 +21,7 @@
 4. 최고 점수, 설정, 저장 복구, 조작 안내
 5. 데스크톱·태블릿·모바일 레이아웃과 터치 입력
 6. 비차단 게임 피드백, 접근성, dirty rendering
-7. E2E·시각 검증, README, handoff
+7. E2E·시각 검증과 README 정리
 
 ## 목표 뷰포트
 
@@ -43,10 +43,10 @@
 - 모든 버튼에 accessible name과 focus 표시가 있다.
 - reduced motion과 고대비 설정이 동작한다.
 - 정상 흐름에서 console error와 처리되지 않은 예외가 없다.
-- README와 `docs/notes/handoff.md`가 최종 구현을 반영한다.
+- README가 최종 구현과 검증 결과를 반영한다.
 
 ## 구현 상태 (2026-08-07)
 
-7개 구현 단계를 모두 완료했다. 실제 변경은 기준선 이후 UI 구조·상태/설정·터치·피드백/접근성·시각/성능 검증·문서 커밋으로 분리했다. 자동 검증 결과와 아직 수동 확인이 필요한 항목은 `docs/notes/handoff.md`에 기록한다.
+7개 구현 단계를 모두 완료했다. 실제 변경은 기준선 이후 UI 구조·상태/설정·터치·피드백/접근성·시각/성능 검증·문서 커밋으로 분리했다. 자동 검증 결과는 README에 기록한다.
 
 후속 작업에서 단일 GameShell을 `Home`, `Game`, `Result` Screen으로 재구성했다. 상태 소유권, History API, overlay/dialog 분류, run 보존 정책의 최종 계약은 `docs/plans/stackfall-screen-architecture.md`를 참조한다.
