@@ -1,5 +1,13 @@
 # 인수인계
 
+## 2026-08-25 README 최신화
+
+- README의 Home/Game/Result 설명을 절제된 아케이드 UI 구현과 일치하도록 고쳤다.
+- 최신 Playwright desktop 스냅샷 3장을 화면 자료로 배치하고 GitHub Pages workflow 상태 배지를 추가했다.
+- 권장 환경을 Node.js 22와 npm 10.9.4로 명시하고 현재 검증 수치(Vitest 51, Chromium E2E 50, visual fixture 17)를 반영했다.
+- 라이브 사이트, workflow, 배지는 HTTP 200이며 모든 로컬 README 링크가 존재함을 확인했다.
+- `npm run check` 전체 통과. README와 이 인수인계 변경은 커밋·push하지 않았다.
+
 ## 2026-08-25 절제된 아케이드 UI 정리
 
 Stackfall의 Drop Cabinet 정체성은 유지하면서 반복 장식, 과장된 홈 카피, 중첩 카드와 구조적 빈 공간을 정리했다.

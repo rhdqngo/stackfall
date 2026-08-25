@@ -1,14 +1,20 @@
 # Stackfall
 
-Stackfall은 브라우저에서 즐기는 싱글플레이 낙하 블록 게임입니다. 10×20 보드, 7-bag, SRS 회전, lock delay, hold, ghost, 다음 조각 3개를 제공하며, 게임 규칙과 화면 UI를 분리한 바닐라 TypeScript 구조로 구현되어 있습니다.
+Stackfall은 브라우저에서 즐기는 싱글플레이 낙하 블록 게임입니다. 10×20 보드, 7-bag, SRS 회전, lock delay, hold, ghost, 다음 조각 3개를 제공하며, 게임 규칙과 화면 UI를 분리한 바닐라 TypeScript 구조로 구현되어 있습니다. UI는 보드를 중심에 둔 절제된 아케이드 스타일을 사용합니다.
 
 **[GitHub Pages에서 플레이하기](https://rhdqngo.github.io/stackfall/)**
 
-![Stackfall Home Screen](tests/e2e/visual.spec.ts-snapshots/home-desktop-chromium-win32.png)
+[![Deploy Stackfall to GitHub Pages](https://github.com/rhdqngo/stackfall/actions/workflows/deploy-pages.yml/badge.svg?branch=main)](https://github.com/rhdqngo/stackfall/actions/workflows/deploy-pages.yml)
+
+## 화면
+
+| Home | Game | Result |
+| :---: | :---: | :---: |
+| ![Stackfall 홈 화면](tests/e2e/visual.spec.ts-snapshots/home-desktop-chromium-win32.png) | ![Stackfall 게임 화면](tests/e2e/visual.spec.ts-snapshots/running-desktop-chromium-win32.png) | ![Stackfall 결과 화면](tests/e2e/visual.spec.ts-snapshots/result-desktop-chromium-win32.png) |
 
 ## 실행
 
-요구 환경은 Node.js와 npm 10.9.4입니다.
+배포 환경과 동일한 Node.js 22, npm 10.9.4를 권장합니다.
 
 ```bash
 npm install
@@ -21,11 +27,11 @@ Vite가 출력한 로컬 주소를 브라우저에서 엽니다. production buil
 
 Stackfall은 역할이 다른 세 개의 최상위 Screen을 사용합니다.
 
-- **Home (`#/`)**: 작은 attract well과 Feed Gate로 게임을 소개하고 한 번에 새 게임을 시작합니다.
-- **Game (`#/game`)**: 하나의 Drop Cabinet 안에 보드, hold/next cartridge, 점수판과 플레이 입력만 표시합니다. 일시정지는 보드 맥락을 유지하는 stop gate입니다.
-- **Result (`#/result`)**: 잠긴 Feed Gate 아래에서 최종 점수·라인·레벨·최고 점수를 확인하고 재도전하거나 Home으로 이동합니다.
+- **Home (`#/`)**: attract well, 한 줄 게임 설명, 시작 동작과 최고 점수만 표시합니다.
+- **Game (`#/game`)**: 보드와 분리된 hold/next 미리보기, 점수판과 플레이 입력을 표시합니다. 실제 보드의 Feed Gate와 하단 상태 스트립만 시각적 장치로 사용합니다.
+- **Result (`#/result`)**: 카드 없이 최종 점수를 가장 크게 보여주고 라인·레벨·최고 점수, 재도전과 Home 이동을 함께 제공합니다. 데스크톱은 2열, 모바일은 단일 열입니다.
 
-설정과 전체 조작 도움말은 현재 Screen으로 정확히 돌아올 수 있는 dialog로 유지합니다. 재시작·실행 중 Home 이동은 확인 dialog를 거치며, 저장 데이터 복구는 toast, 플레이 공간 부족은 blocking notice로 알립니다. 진행 중인 run은 브라우저 저장소에 저장하지 않으므로 새로고침이나 직접 Game/Result URL 진입 시 Home으로 안전하게 돌아갑니다.
+설정과 전체 조작 도움말은 현재 Screen으로 정확히 돌아올 수 있는 dialog로 유지합니다. 일시정지는 간결한 overlay로 보드 맥락을 보존하고, 재시작·실행 중 Home 이동은 확인 dialog를 거칩니다. 저장 데이터 복구는 toast, 플레이 공간 부족은 blocking notice로 알립니다. 진행 중인 run은 브라우저 저장소에 저장하지 않으므로 새로고침이나 직접 Game/Result URL 진입 시 Home으로 안전하게 돌아갑니다.
 
 ## 조작
 
@@ -90,17 +96,17 @@ npm run check
 
 의도적인 디자인 변경 뒤에만 `npm run test:visual:update`로 시각 기준선을 갱신합니다. `npm run measure:performance`는 데스크톱과 모바일을 각각 30초 측정해 frame duration, long task, heap 변화, DOM 노드 수를 출력합니다.
 
-현재 자동 E2E는 Chromium을 사용합니다. Firefox/WebKit과 iOS Safari/Android Chrome의 실제 기기 제스처·safe area 검증은 별도 수동 출시 점검 항목입니다.
+현재 검증 기준은 Vitest 9개 파일·51개 테스트와 Chromium E2E 50개이며, E2E에는 17개 시각 회귀 fixture가 포함됩니다. Firefox/WebKit과 iOS Safari/Android Chrome의 실제 기기 제스처·safe area 검증은 별도 수동 출시 점검 항목입니다.
 
 ## 배포
 
-`main` 브랜치에 push하면 GitHub Pages 전용 workflow가 Node.js 22와 npm 10.9.4로 production build를 생성해 배포합니다. 빌드 산출물은 저장소에 커밋하지 않으며, Vite의 상대 base 경로를 사용해 `https://rhdqngo.github.io/stackfall/` 아래에서 asset을 불러옵니다.
+`main` 브랜치에 push하면 [GitHub Pages 배포 workflow](https://github.com/rhdqngo/stackfall/actions/workflows/deploy-pages.yml)가 Node.js 22와 npm 10.9.4로 production build를 생성해 배포합니다. 빌드 산출물은 저장소에 커밋하지 않으며, Vite의 상대 base 경로를 사용해 [라이브 사이트](https://rhdqngo.github.io/stackfall/) 아래에서 asset을 불러옵니다.
 
 별도의 원격 CI matrix는 운영하지 않습니다. 변경을 push하기 전 로컬에서 `npm run check`를 통과시키는 것을 배포 기준으로 사용합니다.
 
 ## 자산과 범위
 
-외부 폰트, 이미지, 아이콘 라이브러리, 사운드 자산을 사용하지 않습니다. 계정, 서버, 순위표, 멀티플레이, 결제, 광고는 범위 밖입니다. Screen 개편에서 게임 규칙, 점수 공식, 입력 타이밍은 변경하지 않았습니다.
+외부 폰트, 이미지, 아이콘 라이브러리, 사운드 자산을 사용하지 않습니다. README의 화면 자료는 Playwright가 관리하는 최신 시각 회귀 스냅샷입니다. 계정, 서버, 순위표, 멀티플레이, 결제, 광고는 범위 밖이며 UI 정리에서도 게임 규칙, 점수 공식, 입력 타이밍은 변경하지 않았습니다.
 
 ## 라이선스
 
