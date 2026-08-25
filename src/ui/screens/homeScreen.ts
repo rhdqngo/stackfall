@@ -43,7 +43,6 @@ export function createHomeScreen(): HomeScreenRefs {
         </div>
       </div>
       <div class="home-intro">
-        <p>블록을 쌓아 가로줄을 완성하세요.</p>
         <button id="home-start-action" class="button button--primary home-start" type="button">게임 시작</button>
         <div class="home-meta">
           <aside class="home-best" aria-label="최고 점수">

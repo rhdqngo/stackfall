@@ -50,6 +50,7 @@ test("supports keyboard start, play, pause, resume, and confirmed restart", asyn
 
   await page.keyboard.press("p");
   await expect(page.locator("#pause-overlay")).toBeVisible();
+  await expect(page.locator("#pause-description")).toBeHidden();
   await expect(page.locator("#game-status")).toHaveText("일시정지");
   await expect(page.locator("#game-play-surface")).toHaveAttribute("inert", "");
   const pausedScore = await page.locator("#score-value").textContent();
@@ -228,6 +229,7 @@ for (const route of ["game", "result"]) {
 }
 
 const targetViewports = [
+  { name: "large desktop", width: 1920, height: 1080, touch: false },
   { name: "desktop", width: 1440, height: 900, touch: false },
   { name: "small desktop", width: 1024, height: 768, touch: false },
   { name: "portrait tablet", width: 768, height: 1024, touch: false },
@@ -293,14 +295,11 @@ for (const screen of [
   }
 }
 
-test("keeps long Korean copy and large run values readable on mobile", async ({ page }) => {
+test("keeps large run values readable on mobile", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await enableTouchControls(page);
   await page.goto("/?fixture=ready&freeze=1");
   await page.locator("#home-best-value").evaluate((element) => { element.textContent = "9,999,999,999"; });
-  await page.locator(".home-intro > p:not(.home-input-hint)").evaluate((element) => {
-    element.textContent = "조각을 정렬하고 다음 수를 준비하며, 빠르게 쌓이는 흐름을 끝까지 안정적으로 관리하세요.";
-  });
   expect(await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth)).toBeLessThanOrEqual(0);
 
   await page.goto("/?fixture=running&freeze=1");

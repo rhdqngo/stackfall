@@ -52,7 +52,7 @@
   --ease-exit: cubic-bezier(0.4, 0, 1, 1);
   --cabinet-highlight: rgba(240, 237, 227, 0.22);
   --cabinet-shadow: rgba(0, 0, 0, 0.58);
-  --board-cell: clamp(24px, min(calc((100vw - 440px) / 10), calc((100dvh - 190px) / 20)), 34px);
+  --board-cell: clamp(24px, min(calc((100vw - 420px) / 10), calc((100dvh - 180px) / 20)), 50px);
 }
 
 [data-contrast="high"] {

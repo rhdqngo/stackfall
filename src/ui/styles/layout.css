@@ -79,7 +79,10 @@
 
 .game-layout {
   display: grid;
-  grid-template-columns: minmax(126px, 144px) auto minmax(136px, 156px);
+  grid-template-columns:
+    clamp(126px, calc(var(--board-cell) * 4.2), 190px)
+    auto
+    clamp(136px, calc(var(--board-cell) * 4.4), 200px);
   grid-template-areas: "hold board next";
   justify-content: center;
   align-items: start;

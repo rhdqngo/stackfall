@@ -113,7 +113,7 @@ export function createGameScreen(): GameScreenRefs {
       <div class="pause-panel">
         <span id="pause-eyebrow" class="sr-only">사용자 일시정지</span>
         <h2 id="pause-title">일시정지</h2>
-        <p id="pause-description">준비되면 같은 흐름으로 돌아갑니다.</p>
+        <p id="pause-description" hidden></p>
         <button id="pause-continue-action" class="button button--primary" type="button">계속하기</button>
         <div class="pause-secondary-actions">
           <button id="pause-restart-action" class="button" type="button">${icon("restart")}<span>다시 시작</span></button>

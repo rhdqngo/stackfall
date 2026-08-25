@@ -112,16 +112,6 @@
   justify-items: start;
 }
 
-.home-intro > p:not(.home-input-hint) {
-  max-width: 330px;
-  margin: 0 0 var(--space-5);
-  color: var(--text-primary);
-  font-size: clamp(1.05rem, 1.7vw, 1.2rem);
-  font-weight: 650;
-  letter-spacing: -0.018em;
-  line-height: 1.55;
-}
-
 .button.home-start {
   width: min(100%, 300px);
   min-height: 52px;
@@ -490,7 +480,7 @@
 
 .preview-frame {
   position: relative;
-  min-height: 92px;
+  min-height: clamp(92px, calc(var(--board-cell) * 3), 150px);
 }
 
 .hold-panel[data-available="false"] .preview-frame {
@@ -500,17 +490,17 @@
 #hold-preview {
   display: block;
   width: 100%;
-  height: 92px;
+  height: clamp(92px, calc(var(--board-cell) * 3), 150px);
 }
 
 .next-preview {
   display: block;
   width: 100%;
-  height: 68px;
+  height: clamp(68px, calc(var(--board-cell) * 2.2), 110px);
 }
 
 .next-item--primary .next-preview {
-  height: 110px;
+  height: clamp(110px, calc(var(--board-cell) * 3.4), 170px);
 }
 
 .empty-preview {
@@ -936,12 +926,6 @@ html[data-touch-controls="on"] .touch-controls {
 
   .home-intro {
     width: 100%;
-  }
-
-  .home-intro > p:not(.home-input-hint) {
-    margin-bottom: var(--space-4);
-    font-size: 0.95rem;
-    line-height: 1.5;
   }
 
   .button.home-start {

@@ -684,6 +684,7 @@ export class StackfallApp {
         this.refs.game.pauseEyebrow.textContent = copy.eyebrow;
         this.refs.game.pauseTitle.textContent = copy.title;
         this.refs.game.pauseDescription.textContent = copy.description;
+        this.refs.game.pauseDescription.hidden = copy.description.length === 0;
       }
       this.renderedPauseKey = pauseKey;
     }

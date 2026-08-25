@@ -1,5 +1,16 @@
 # 인수인계
 
+## 2026-08-25 Home 문구 제거와 인게임 확대
+
+- 라이브 JS 번들을 직접 확인한 결과 이전 `빈틈을 읽고…`/`조각을 맞추고…` 문구는 없고 현재 대체 문구만 포함돼 있어 브라우저의 이전 HTML 캐시 문제로 판별했다.
+- Home의 대체 설명도 제거해 attract well, 게임 시작, 최고 점수와 Enter 힌트만 남겼다.
+- 일반 Pause의 `게임이 멈춰 있습니다` 설명을 제거하고 자동 중단·viewport 복구처럼 원인을 설명해야 할 때만 문구를 표시한다.
+- desktop board cell 상한을 34px에서 50px로 늘리고 Hold/Next 폭과 preview 높이도 board cell에 맞춰 확장한다.
+- README 플레이 링크에 `?release=ui-cleanup-20260825#/`를 사용해 기존 브라우저 캐시와 분리했다.
+- 1920×1080 geometry 검증과 일반 Pause 설명 숨김 검증을 추가했다.
+- `npm run check`: ESLint 경고 0, Vitest 51개, production build, Chromium E2E 53개 통과.
+- visual fixture 17개를 갱신하고 Home/Game/Pause desktop 및 Home mobile을 직접 검토했다.
+
 ## 2026-08-25 README 최신화
 
 - README의 Home/Game/Result 설명을 절제된 아케이드 UI 구현과 일치하도록 고쳤다.

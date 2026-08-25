@@ -18,15 +18,9 @@ export interface PauseCopy {
 export function getPauseCopy(pauseReason: PauseReason = null): PauseCopy {
   const description = pauseReason === "interruption"
     ? "창을 벗어나 게임이 자동으로 멈췄습니다."
-    : pauseReason === "settings" || pauseReason === "controls"
-      ? "게임이 멈춰 있습니다."
-      : pauseReason === "restart"
-        ? "현재 게임이 멈춰 있습니다."
-        : pauseReason === "navigation"
-          ? "홈 이동을 취소했습니다."
-          : pauseReason === "viewport"
-            ? "화면 크기가 복구되었습니다."
-            : "게임이 멈춰 있습니다.";
+    : pauseReason === "viewport"
+      ? "화면 크기가 복구되었습니다."
+      : "";
   return {
     eyebrow: pauseReason === "interruption" ? "자동 일시정지" : "사용자 일시정지",
     title: "일시정지",

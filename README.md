@@ -2,7 +2,7 @@
 
 Stackfall은 브라우저에서 즐기는 싱글플레이 낙하 블록 게임입니다. 10×20 보드, 7-bag, SRS 회전, lock delay, hold, ghost, 다음 조각 3개를 제공하며, 게임 규칙과 화면 UI를 분리한 바닐라 TypeScript 구조로 구현되어 있습니다. UI는 보드를 중심에 둔 절제된 아케이드 스타일을 사용합니다.
 
-**[GitHub Pages에서 플레이하기](https://rhdqngo.github.io/stackfall/)**
+**[GitHub Pages에서 플레이하기](https://rhdqngo.github.io/stackfall/?release=ui-cleanup-20260825#/)**
 
 [![Deploy Stackfall to GitHub Pages](https://github.com/rhdqngo/stackfall/actions/workflows/deploy-pages.yml/badge.svg?branch=main)](https://github.com/rhdqngo/stackfall/actions/workflows/deploy-pages.yml)
 
@@ -27,7 +27,7 @@ Vite가 출력한 로컬 주소를 브라우저에서 엽니다. production buil
 
 Stackfall은 역할이 다른 세 개의 최상위 Screen을 사용합니다.
 
-- **Home (`#/`)**: attract well, 한 줄 게임 설명, 시작 동작과 최고 점수만 표시합니다.
+- **Home (`#/`)**: attract well, 시작 동작과 최고 점수만 표시합니다.
 - **Game (`#/game`)**: 보드와 분리된 hold/next 미리보기, 점수판과 플레이 입력을 표시합니다. 실제 보드의 Feed Gate와 하단 상태 스트립만 시각적 장치로 사용합니다.
 - **Result (`#/result`)**: 카드 없이 최종 점수를 가장 크게 보여주고 라인·레벨·최고 점수, 재도전과 Home 이동을 함께 제공합니다. 데스크톱은 2열, 모바일은 단일 열입니다.
 
@@ -96,11 +96,11 @@ npm run check
 
 의도적인 디자인 변경 뒤에만 `npm run test:visual:update`로 시각 기준선을 갱신합니다. `npm run measure:performance`는 데스크톱과 모바일을 각각 30초 측정해 frame duration, long task, heap 변화, DOM 노드 수를 출력합니다.
 
-현재 검증 기준은 Vitest 9개 파일·51개 테스트와 Chromium E2E 50개이며, E2E에는 17개 시각 회귀 fixture가 포함됩니다. Firefox/WebKit과 iOS Safari/Android Chrome의 실제 기기 제스처·safe area 검증은 별도 수동 출시 점검 항목입니다.
+현재 검증 기준은 Vitest 9개 파일·51개 테스트와 Chromium E2E 53개이며, E2E에는 17개 시각 회귀 fixture가 포함됩니다. Firefox/WebKit과 iOS Safari/Android Chrome의 실제 기기 제스처·safe area 검증은 별도 수동 출시 점검 항목입니다.
 
 ## 배포
 
-`main` 브랜치에 push하면 [GitHub Pages 배포 workflow](https://github.com/rhdqngo/stackfall/actions/workflows/deploy-pages.yml)가 Node.js 22와 npm 10.9.4로 production build를 생성해 배포합니다. 빌드 산출물은 저장소에 커밋하지 않으며, Vite의 상대 base 경로를 사용해 [라이브 사이트](https://rhdqngo.github.io/stackfall/) 아래에서 asset을 불러옵니다.
+`main` 브랜치에 push하면 [GitHub Pages 배포 workflow](https://github.com/rhdqngo/stackfall/actions/workflows/deploy-pages.yml)가 Node.js 22와 npm 10.9.4로 production build를 생성해 배포합니다. 빌드 산출물은 저장소에 커밋하지 않으며, Vite의 상대 base 경로를 사용해 [라이브 사이트](https://rhdqngo.github.io/stackfall/?release=ui-cleanup-20260825#/) 아래에서 asset을 불러옵니다.
 
 별도의 원격 CI matrix는 운영하지 않습니다. 변경을 push하기 전 로컬에서 `npm run check`를 통과시키는 것을 배포 기준으로 사용합니다.
 
