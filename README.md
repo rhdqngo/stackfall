@@ -2,6 +2,8 @@
 
 Stackfall은 브라우저에서 즐기는 싱글플레이 낙하 블록 게임입니다. 10×20 보드, 7-bag, SRS 회전, lock delay, hold, ghost, 다음 조각 3개를 제공하며, 게임 규칙과 화면 UI를 분리한 바닐라 TypeScript 구조로 구현되어 있습니다.
 
+**[GitHub Pages에서 플레이하기](https://rhdqngo.github.io/stackfall/)**
+
 ![Stackfall Home Screen](tests/e2e/visual.spec.ts-snapshots/home-desktop-chromium-win32.png)
 
 ## 실행
@@ -19,9 +21,9 @@ Vite가 출력한 로컬 주소를 브라우저에서 엽니다. production buil
 
 Stackfall은 역할이 다른 세 개의 최상위 Screen을 사용합니다.
 
-- **Home (`#/`)**: 게임 소개, 최고 점수, 핵심 조작을 확인하고 한 번에 새 게임을 시작합니다.
-- **Game (`#/game`)**: 보드, hold/next, 점수 HUD와 플레이 입력만 표시합니다. 일시정지는 보드 맥락을 유지하는 overlay입니다.
-- **Result (`#/result`)**: 완료된 run의 최종 점수·라인·레벨·최고 점수를 확인하고 재도전하거나 Home으로 이동합니다.
+- **Home (`#/`)**: 작은 attract well과 Feed Gate로 게임을 소개하고 한 번에 새 게임을 시작합니다.
+- **Game (`#/game`)**: 하나의 Drop Cabinet 안에 보드, hold/next cartridge, 점수판과 플레이 입력만 표시합니다. 일시정지는 보드 맥락을 유지하는 stop gate입니다.
+- **Result (`#/result`)**: 잠긴 Feed Gate 아래에서 최종 점수·라인·레벨·최고 점수를 확인하고 재도전하거나 Home으로 이동합니다.
 
 설정과 전체 조작 도움말은 현재 Screen으로 정확히 돌아올 수 있는 dialog로 유지합니다. 재시작·실행 중 Home 이동은 확인 dialog를 거치며, 저장 데이터 복구는 toast, 플레이 공간 부족은 blocking notice로 알립니다. 진행 중인 run은 브라우저 저장소에 저장하지 않으므로 새로고침이나 직접 Game/Result URL 진입 시 Home으로 안전하게 돌아갑니다.
 
@@ -90,6 +92,16 @@ npm run check
 
 현재 자동 E2E는 Chromium을 사용합니다. Firefox/WebKit과 iOS Safari/Android Chrome의 실제 기기 제스처·safe area 검증은 별도 수동 출시 점검 항목입니다.
 
+## 배포
+
+`main` 브랜치에 push하면 GitHub Pages 전용 workflow가 Node.js 22와 npm 10.9.4로 production build를 생성해 배포합니다. 빌드 산출물은 저장소에 커밋하지 않으며, Vite의 상대 base 경로를 사용해 `https://rhdqngo.github.io/stackfall/` 아래에서 asset을 불러옵니다.
+
+별도의 원격 CI matrix는 운영하지 않습니다. 변경을 push하기 전 로컬에서 `npm run check`를 통과시키는 것을 배포 기준으로 사용합니다.
+
 ## 자산과 범위
 
 외부 폰트, 이미지, 아이콘 라이브러리, 사운드 자산을 사용하지 않습니다. 계정, 서버, 순위표, 멀티플레이, 결제, 광고는 범위 밖입니다. Screen 개편에서 게임 규칙, 점수 공식, 입력 타이밍은 변경하지 않았습니다.
+
+## 라이선스
+
+이 프로젝트는 [MIT License](LICENSE)로 배포됩니다.
