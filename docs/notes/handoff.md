@@ -1,5 +1,42 @@
 # 인수인계
 
+## 2026-08-25 GitHub 공개 저장소와 Pages 배포
+
+Stackfall을 MIT 라이선스의 공개 GitHub 저장소로 만들고 GitHub Pages에 배포했다.
+
+- 저장소: `https://github.com/rhdqngo/stackfall`
+- 기본 브랜치: `main`
+- 라이브: `https://rhdqngo.github.io/stackfall/`
+- Pages source: GitHub Actions workflow
+- 최초 배포 run: `32851456939` (`https://github.com/rhdqngo/stackfall/actions/runs/32851456939`)
+- 준비 커밋: `18102b5` Prepare Stackfall for public GitHub Pages deployment
+
+배포 구성:
+
+- `vite.config.ts`는 production build에 상대 base `./`를 사용하며 개발 서버는 `/`를 유지한다.
+- `.github/workflows/deploy-pages.yml`은 `main` push와 수동 실행에서 Node.js 22, npm 10.9.4로 `npm ci`와 `npm run build`를 수행하고 `dist`만 Pages artifact로 배포한다.
+- 별도의 원격 CI matrix는 추가하지 않았다. 로컬 `npm run check`가 push 전 검증 기준이다.
+- repository description, Pages homepage와 `typescript`, `vite`, `canvas`, `game`, `playwright`, `vitest`, `accessibility` topics를 설정했다.
+- `.nojekyll`, `CNAME`, `gh-pages` 브랜치와 신규 패키지는 추가하지 않았다.
+
+검증됨:
+
+- `npm run check`: ESLint 경고 0, Vitest 9개 파일/51개 테스트, TypeScript, production build, Chromium E2E 50개 통과
+- `dist/index.html`의 JS/CSS가 `./assets/...` 상대 경로이며 HTML과 두 asset 모두 라이브에서 HTTP 200
+- Pages deploy job은 32초에 성공했고 production Home이 `#/`로 정상 진입
+- 라이브 Home → Game → Pause → Resume → 14회 이내 hard drop → Result 흐름 통과
+- 새 탭의 `#/game` 직접 진입은 `#/` Home으로 정규화
+- live console warning/error와 처리되지 않은 page error 0건
+- 390×844에서 scroll width 390px, scroll height 844px, board 242×484px, touch dock 366×115.33px로 겹침과 가로 overflow 없음
+- 터치 버튼은 최소 48px 이상이고 설정의 `항상 표시` 선택이 새 탭에서도 유지됨
+
+남은 수동 검증:
+
+- 실제 iPhone Safari/Android Chrome의 safe area, 동적 `dvh`, 두 엄지 멀티터치, pointer cancellation
+- 브라우저 200% 확대와 실제 OS forced-colors/high-contrast
+- 장시간 플레이의 DAS 150ms/ARR 50ms 체감
+- Pages workflow는 성공했지만 GitHub가 일부 사용 action의 Node.js 20 deprecation 전환 안내를 annotation으로 표시했다. 실행은 Node.js 24로 강제되어 실패하지 않았으며 차기 action major 정리 시 재검토한다.
+
 ## 2026-08-07 Drop Cabinet / Feed Gate 전환
 
 Stackfall의 Home, Game, Result를 한 대의 낙하 블록 아케이드 기계가 대기·플레이·결과 모드로 전환되는 `Drop Cabinet / Feed Gate` 시각 체계로 교체했다.
